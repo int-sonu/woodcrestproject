@@ -1,0 +1,126 @@
+/* admin_styles.css */
+/* admin_styles.css */
+
+/* Sidebar */
+.sidebar {
+    background-color: #f1ddcf; /* Salmon background color */
+    height: 100vh; /* Full height of the viewport */
+    position: sticky;
+    top: 0;
+    z-index: 100; /* Ensure sidebar stays above content */
+    padding-top: 1rem; /* Example padding top */
+}
+
+.sidebar-sticky {
+    position: relative;
+    top: 1rem; /* Example spacing from top */
+}
+
+.sidebar .nav-link {
+    font-size: 1.2rem; /* Font size for sidebar links */
+    color: #0c0d0d; /* Text color */
+}
+
+.sidebar .nav-link.active {
+    font-weight: bold; /* Bold font for active link */
+}
+
+.sidebar .nav-link:hover {
+    color: #007bff; /* Hover color */
+}
+
+/* Navbar */
+.bg-lavender {
+    background-color: lavender; /* Lavender background color */
+}
+
+.navbar {
+    padding: 1.5rem 2rem;
+    height: 6rem;
+    background-color: rgb(0, 0, 0); /* Apply lavender background color */
+    color: #2f0505;
+    font-size: 1.6rem;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-brand {
+    position: relative;
+    top: 8px; /* Adjust this value to fine-tune the vertical position */
+    margin-right:0;
+    padding: 0;
+}
+
+.navbar-brand .d-inline-block {
+    position: relative;
+    top: -25px; /* Adjust as needed to fine-tune vertical alignment */
+}
+
+.navbar-nav .nav-link {
+    font-size: 1.4rem;
+    padding: 1rem 1.5rem;
+    color: #ffffff17;
+}
+
+.navbar-nav .nav-link:hover {
+    color: #007bff;
+}
+
+.navbar-nav .nav-link.active {
+    font-weight: bold;
+}
+/* Navbar Brand */
+.navbar-brand {
+    position: relative;
+    top: 30px; 
+    /* Adjust as needed */
+}
+
+/* Navbar Link */
+.navbar-nav .nav-link {
+    color: black !important; /* Important to override Bootstrap defaults */
+    font-size: 16px;
+}
+
+/* Table */
+.table {
+    background-color: #ffffff;
+    box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    margin-bottom: 1rem;
+}
+
+.table th,
+.table td {
+    padding: 0.75rem;
+    vertical-align: middle;
+    border-top: none;
+}
+
+.table th {
+    font-weight: bold;
+    background-color: #f8f9fa;
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: #f8f9fa;
+}
+
+.table th,
+.table td {
+    text-align: center;
+}
+
+.table th:first-child,
+.table td:first-child {
+    text-align: left;
+}
+
+.table th:last-child,
+.table td:last-child {
+    text-align: right;
+}
+
+.table-hover tbody tr:hover {
+    background-color: #f0f0f0;
+    cursor: pointer;
+}

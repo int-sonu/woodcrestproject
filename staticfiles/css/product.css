@@ -1,0 +1,52 @@
+
+        .container {
+            margin-top:10px;
+        }
+
+        .title-block {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .carousel-inner {
+            width: 100%;
+            height: 350px; /* Adjust height as necessary */
+        }
+
+        .carousel-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Ensures the image covers the container */
+        }
+
+        .card-body {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .card-text {
+            font-size: 12px;
+            margin-bottom: 1px;
+        }
+
+        .item-post {
+            margin-bottom: 20px;
+        }
+    
