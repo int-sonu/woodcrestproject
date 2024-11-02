@@ -1,0 +1,494 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ product.product_name }}</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:400,500,600,700">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'libs/font-awesome/css/font-awesome.min.css' %}">
+    <link rel="stylesheet" href="{% static 'libs/owl-carousel/assets/owl.carousel.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/banner.css' %}">
+    <link rel="stylesheet" href="{% static 'css/product.css' %}">
+    <link rel="stylesheet" href="{% static 'css/mstyle.css' %}">
+    <link rel="stylesheet" href="{% static 'css/reponsive.css' %}">
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <style>
+        .product-detail {
+            display: flex;
+            align-items: flex-start;
+            margin-top: 10px;
+        }
+        .product-image img {
+            width: 100%;
+            height:50px;
+            object-fit: contain;
+        }
+        .product-image {
+            flex: 1;
+            margin-top:210px;
+        }
+        .product-info {
+            flex: 1;
+            margin-left: 20px;
+            margin-top: 200px;
+        }
+        .product-info h1 {
+            font-size: 2rem;
+        }
+        .product-info p {
+            font-size: 1rem;
+        }
+        .carousel-item img {
+            max-width: 100%;
+            height: auto;
+            max-height: 500px;
+            object-fit: cover;
+        }
+        .buttons {
+            margin-top: 20px;
+        }
+        .buttons button {
+            margin-right: 10px;
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        .form-control {
+            margin-top: 0.5rem;
+        }
+        .header-top {
+            padding: 5px 0;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        body {
+            padding-top: -50px;
+        }
+        .menu-top .nav-link {
+            font-size: 14px;
+            padding: 5px 10px;
+            margin: 0 5px;
+        }
+        .mobile-logo img, .header-top #logo img {
+            max-height: 50px;
+            width: auto;
+        }
+        .search_widget input {
+            font-size: 14px;
+            padding: 5px 10px;
+        }
+        .cart-icon i, .my-account i {
+            font-size: 16px;
+        }
+        .my-account span, .cart-icon span {
+            font-size: 14px;
+        }
+        .dropdown-menu {
+            font-size: 14px;
+        }
+        #search_widget {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            flex-grow: 1;
+            margin-right: 0;
+        }
+        .cart-icon {
+            margin-left:0px;
+            display: flex;
+            align-items: center;
+        }
+        .my-account {
+            margin-left: 20px;
+            display: flex;
+            align-items: center;
+        }
+        .header-top .row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .seating-arrangements {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .seat-box {
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+            width: 100%; /* Adjust the width here */
+            max-width: 200px; /* Reduced maximum width */
+            height: auto; /* Adjust height to fit the content */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px; /* Add space between boxes */
+        }
+        
+        .seat-box p {
+            margin: 5px 0;
+            font-size: 12px; /* Reduce font size */
+        }
+        
+        .zoom {
+            transition: transform 0.2s; /* Animation */
+        }
+
+        .zoom:hover {
+            transform: scale(1.2); /* Zoom in */
+        }
+        .wishlist-icon {
+            position: absolute;
+            top: 10px; /* Adjust as needed */
+            right: 10px; /* Adjust as needed */
+            background-color: rgba(255, 255, 255, 0.8); /* Light background */
+            padding: 5px;
+            border-radius: 50%;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .wishlist-icon i {
+            font-size: 20px; /* Adjust the icon size */
+            cursor: pointer;
+        }
+        
+        .wishlist-icon:hover i {
+            color: #ff3333; /* Darker red on hover */
+            transform: scale(1.2); /* Slight zoom on hover */
+            transition: all 0.3s ease;
+        }
+        
+        .red-heart {
+            color: red; /* Change the color to red */
+        }
+        
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <header>
+        <!-- header left mobile -->
+        <div class="header-mobile d-md-none">
+            <div class="mobile hidden-md-up text-xs-center d-flex align-items-center justify-content-around">
+                <div id="mobile_mainmenu" class="item-mobile-top">
+                    <i class="fa fa-bars" aria-hidden="true"></i>
+                </div>
+                <div class="mobile-logo">
+                    <img class="logo-mobile img-fluid" src="{% static 'img/home/logo-mobie.png' %}" alt="Prestashop_Furnitica">
+                </div>
+                <div class="mobile-menutop" data-target="#mobile-pagemenu">
+                    <i class="zmdi zmdi-more"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- header desktop -->
+        <div class="header-top d-xs-none ">
+            <div class="container">
+                <div class="row"style="margin-left: -100px;">
+                    <div class="col-sm-5 col-md-2 d-flex align-items-center">
+                        <div id="logo">
+                            <img class="img-fluid" src="{% static 'img/home/log10.png' %}" alt="logo">
+                        </div>
+                    </div>
+                    <div class="main-menu col-sm-3 col-md-5 align-items-center justify-content-center navbar-expand-md">
+                        <div class="menu navbar collapse navbar-collapse">
+                            <ul class="menu-top navbar-nav" style="margin-right: 200px;">
+                                {% for category in categories %}
+                                    <li class="nav-link" style="margin-left: -80px; margin: 10px 0; font-weight: bold;">
+                                        <a href="#" class="parent">{{ category.name }}</a>
+                                        <div class="dropdown-menu">
+                                            <ul>
+                                                {% for subcategory in category.subcategories.all %}
+                                                    <li class="item">
+                                                        <a href="{% url 'subcategory_detail' subcategory.id %}" style="color: black;">{{ subcategory.sub_name }}</a>
+                                                    </li>
+                                                {% empty %}
+                                                    <li class="item">
+                                                        <a href="#">No subcategories available</a>
+                                                    </li>
+                                                {% endfor %}
+                                            </ul>
+                                        </div>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                    <div id="search_widget" class="col-sm-7 col-md-5 d-flex justify-content-end">
+                        <form method="get" action="#">
+                            <input type="text" name="s" value="" placeholder="Search ..." class="ui-autocomplete-input" autocomplete="off">
+                            <button type="submit">
+                                <i class="fa fa-search"></i>
+                            </button>
+                        </form>
+                        {% if user.is_authenticated %}
+                        <!-- Display cart icon and custom dropdown -->
+                        <div class="col-sm-2 col-md-2 align-items-center d-flex">
+                            <div class="d-flex align-items-center">
+                                <a href="" class="cart-icon" style="display: flex; align-items: center; text-decoration: none;">
+                                    <i class="fa fa-shopping-cart" style="font-size: 20px; margin-left: 5px; margin-top:16px; position: relative;">
+                                        <!-- Badge to display item count -->
+                                        <span class="badge" style="position: absolute; top: -10px; right: -10px; background-color: red; color: white; border-radius: 50%; padding: 3px 7px; font-size: 12px;">
+                                            {{ cart_item_count|default:"0" }}  <!-- Show item count or 0 if not available -->
+                                        </span>
+                                    </i>
+                                    <span style="margin-top:15px; margin-left:20px;margin-right:30px;">Cart</span>
+                                </a>
+                               
+
+                            </div>
+                        </div>
+{% else %}
+    <!-- Provide a link to the login page -->
+    <div class="col-sm-2 col-md-2 align-items-center d-flex">
+        <a href="{% url 'login' %}" class="cart-icon" style="display: flex; align-items: center; text-decoration: none;">
+            <i class="fa fa-shopping-cart" style="font-size: 20px; margin-left: 5px; margin-top:16px;">
+                
+            </i>
+            <span style="margin-top:15px;margin-left:8px;">Cart</span>
+        </a>
+       
+    </div>
+{% endif %}
+<a class="seller" href="{% url 'register' %}" style="display: flex; align-items: center; margin-left: 15px; color:black; border-radius: 5px;">
+    <i class="fa fa-user-plus" style="margin-right: 5px;"></i>
+    <span>Become a Seller</span>
+</a>
+               
+    <div style="display: flex; flex-direction: column; gap: 10px; align-items: flex-start;">
+        <div>
+            
+        </div>
+        <div>
+            {% if user.is_authenticated %}
+             <div style="display: flex; flex-direction: column; gap: 10px; align-items: flex-start;">
+                <div>
+
+                    <div class="dropdown">
+                        <a class="my-account" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="display: flex; align-items: center; text-decoration: none;">
+                            <i class="fa fa-user-circle" style="margin-left:12px;"></i>
+                            <span >Account</span>
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                            <a class="dropdown-item" href="{% url 'update_profile' %}"><i class="fa fa-user-circle" style="margin-right: 5px;"></i> Profile</a>
+                            <a class="dropdown-item" href="#"><i class="fa fa-shopping-cart" style="margin-right: 5px;"></i> Orders</a>
+                            <a class="dropdown-item" href="#"><i class="fa fa-heart" style="margin-right: 5px;"></i> Wishlists</a>
+                            <a class="dropdown-item" href="#"><i class="fa fa-phone" style="margin-right: 5px;"></i> Contact Us</a>
+                            <a class="dropdown-item" href="{% url 'logout' %}"><i class="fa fa-sign-out" style="margin-right: 5px;"></i> Logout</a>
+                        </div>
+                    </div>
+                    {% else %}
+                    <!-- Login link for non-authenticated users -->
+                    <a class="login" href="{% url 'login' %}" rel="nofollow" title="Login" style="display: flex; align-items: center; text-decoration: none;">
+                        <i class="fa fa-sign-in" style="margin-right: 5px;"></i>
+                        <span>Login</span>
+                    </a>
+                    {% endif %}
+                </div>
+
+                <!-- Custom Button -->
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+</div>
+</header>
+
+<div class="container">
+    <div class="product-detail">
+        
+        <div class="product-image">
+            <div id="carousel-{{ product.id }}" class="carousel slide" data-ride="carousel">
+                <div class="carousel-inner">
+                    {% for image in product.images.all %}
+                    <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                        <div class="card position-relative">
+                            <img src="{{ image.image.url }}" class="card-img-top zoom" alt="{{ image.alt_text }}" style="object-fit: contain; width: 100%; height: auto;">
+                            
+                            <!-- Wishlist heart icon -->
+                            <div class="wishlist-icon">
+                                <a href="{% url 'add_to_wishlist' product.id %}" title="Add to Wishlist">
+                                    <i class="fa fa-heart"></i>
+                                </a>
+                            </div>
+                            
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+               
+            </div>
+        </div>
+        
+        <div class="product-info">
+            <h1 style="color: #8b4513; font-size: 2.5rem; font-weight: bold;">{{ product.product_name }}</h1>
+            <div class="form-group" style="color:black;">
+                <strong>Wood:</strong> {{ product.wood }}
+            </div>
+            <p style="color:red; font-size:18px;">
+                <strong style="color:black;font-size:20px">Rs.</strong> {{ product.price }}
+            </p>
+            <h2 style="font-size: 1.5rem; font-weight: bold; margin-top: 20px;color:black;"><b>Product Details:</b></h2>
+            <ul>
+                <li style="color:black;"><strong>Wood:</strong> {{ product.wood }}</li>
+                <li style="color:black;"><strong>Price:</strong> {{ product.price }}</li>
+                <li style="color:black;"><strong>Stock:</strong> {{ product.stock }}</li>
+                <li style="color:black;"><strong>Description:</strong> {{ product.description }}</li>
+            </ul>
+            <div class="seating-arrangements">
+                {% if seats %}
+                    {% for seat in seats %}
+                    <div class="seat-box">
+                        <p><strong>Seat Type:</strong> {{ seat.seat_type }}</p>
+                        <p><strong>Price:</strong> Rs. {{ seat.seat_price }}</p>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                {% endif %}
+            </div>
+
+            <!-- Quantity Input Field -->
+            <div class="form-group" style="margin-top: 20px;">
+    <label for="quantity" style="color:black;"><strong>Quantity:</strong></label>
+    <input type="number" id="quantity" name="quantity" class="form-control" value="1" min="1" max="{{ product.stock }}" style="width: 100px;">
+</div>
+<div class="buttons">
+    <a href="javascript:void(0);" class="btn btn-primary" id="add-to-cart-btn">
+        <i class="fas fa-cart-plus"></i> Add to Cart
+    </a>
+    <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#product-details-modal">View Details</button>
+</div>
+
+<script>
+    document.getElementById('add-to-cart-btn').addEventListener('click', function() {
+        // Get the product ID and quantity
+        const productId = "{{ product.id }}"; // Use Django template variable to get product ID
+        const quantity = document.getElementById('quantity').value; // Get the quantity value
+
+        // Create the URL to add to cart with the selected quantity
+        const url = `{% url 'add_to_cart' product.id %}?quantity=` + quantity;
+
+        // Redirect to the URL
+        window.location.href = url; // Navigate to the URL
+    });
+</script>
+
+
+        </div>
+    </div>
+</div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="product-details-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Product Details</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p style="color:black;"><strong>Wood:</strong> {{ product.wood }}</p>
+                    <p style="color:black;"><strong>Price:</strong> {{ product.price }}</p>
+                    <p style="color:black;"><strong>Stock:</strong> {{ product.stock }}</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const wishlistIcons = document.querySelectorAll('.wishlist-icon i');
+
+            wishlistIcons.forEach(icon => {
+                // Check if the product is already in the wishlist
+                const productId = icon.dataset.productId; // Assuming you have a data attribute for product ID
+                const isInWishlist = localStorage.getItem(`wishlist_${productId}`) === 'true';
+
+                // Set the initial state of the icon based on the wishlist status
+                if (isInWishlist) {
+                    icon.classList.add('red-heart'); // Add the red-heart class if already in wishlist
+                }
+
+                icon.addEventListener('click', function() {
+                    // Toggle the red-heart class
+                    const isNowInWishlist = this.classList.toggle('red-heart'); // Ensure the class is toggled
+
+                    // Update the wishlist status in local storage
+                    localStorage.setItem(`wishlist_${productId}`, isNowInWishlist);
+
+                    // Show a message when the product is added to the wishlist
+                    const message = isNowInWishlist ? 
+                        'Product added to wishlist!' : 
+                        'Product removed from wishlist!';
+                    
+                    // Create a notification element
+                    const notification = document.createElement('div');
+                    notification.textContent = message;
+                    notification.style.position = 'fixed';
+                    notification.style.bottom = '20px';
+                    notification.style.right = '20px';
+                    notification.style.backgroundColor = '#28a745'; // Green background
+                    notification.style.color = 'white';
+                    notification.style.padding = '15px'; // Increased padding
+                    notification.style.borderRadius = '5px';
+                    notification.style.zIndex = '1000';
+                    notification.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.2)'; // Added shadow for better visibility
+                    notification.style.fontSize = '16px'; // Increased font size for better readability
+                    notification.style.transition = 'opacity 0.5s'; // Smooth transition for opacity
+                    notification.style.opacity = '1'; // Start fully visible
+                    
+                    // Append the notification to the body
+                    document.body.appendChild(notification);
+
+                    // Fade out the notification after 1 minute (60000 milliseconds)
+                    setTimeout(() => {
+                        notification.style.opacity = '0';
+                    }, 60000);
+
+                    // Remove the notification from the DOM after the fade out animation
+                    setTimeout(() => {
+                        notification.remove();
+                    }, 60500); // 50 milliseconds after the fade out animation
+
+                    // If the product is removed from the wishlist, change the icon color
+                    if (!isNowInWishlist) {
+                        // Fade out the icon
+                        this.style.transition = 'color 0.5s, opacity 0.5s'; // Add transition for color and opacity
+                        this.style.opacity = '0'; // Start fade out
+                        setTimeout(() => {
+                            this.classList.remove('red-heart'); // Remove the red-heart class after fade out
+                            this.style.opacity = '1'; // Reset opacity for next click
+                        }, 500); // Wait for fade out to complete
+                    } else {
+                        // If added to wishlist, ensure the icon is red
+                        this.classList.add('red-heart'); // Ensure the class is added
+                    }
+                });
+            });
+        });
+    </script>
+    
+</body>
+</html>

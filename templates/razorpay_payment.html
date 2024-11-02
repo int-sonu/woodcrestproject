@@ -1,0 +1,54 @@
+<form action="{% url 'payment_success' %}" method="POST">
+    {% csrf_token %}
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script>
+        var options = {
+            "key": "{{ rzp_test_AnXj68fT4zKwe0 }}", // Your Razorpay Key
+            "amount": {{ total_amount }}, // Amount is in paise
+            "currency": "INR",
+            "name": "Your Store Name",
+            "description": "Order Payment",
+            "image": "https://yourlogo.com/logo.png",
+            "order_id": "{{ razorpay_order_id }}", // This is the Razorpay order ID
+            "handler": function (response){
+                // You can send this response to your server for verification
+                var form = document.createElement("form");
+                form.method = "POST";
+                form.action = "{% url 'payment_success' %}"; // Change to your payment success URL
+                var input = document.createElement("input");
+                input.type = "hidden";
+                input.name = "razorpay_order_id";
+                input.value = response.razorpay_order_id;
+                form.appendChild(input);
+
+                var input2 = document.createElement("input");
+                input2.type = "hidden";
+                input2.name = "razorpay_payment_id";
+                input2.value = response.razorpay_payment_id;
+                form.appendChild(input2);
+
+                var input3 = document.createElement("input");
+                input3.type = "hidden";
+                input3.name = "razorpay_signature";
+                input3.value = response.razorpay_signature;
+                form.appendChild(input3);
+
+                document.body.appendChild(form);
+                form.submit();
+            },
+            "prefill": {
+                "name": "Customer Name",
+                "email": "customer@example.com",
+                "contact": "9999999999"
+            },
+            "notes": {
+                "address": "Customer address"
+            },
+            "theme": {
+                "color": "#F37254"
+            }
+        };
+        var rzp1 = new Razorpay(options);
+        rzp1.open();
+    </script>
+</form>

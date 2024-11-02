@@ -1,0 +1,137 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Wishlist</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/wishlist.css' %}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+        }
+
+        h2 {
+            color: #333;
+            font-size: 20px; /* Reduced font size */
+            text-align: left;
+            padding-left: 20px;
+            margin-top: 20px;
+            margin-bottom: 20px; /* Optional: add space below the heading */
+        }
+        
+
+        .wishlist-container {
+            max-width: 900px;
+            margin: 40px auto; /* Increased margin for space above */
+            padding: 20px;
+            margin-top:40px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .wishlist-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .wishlist-item:last-child {
+            border-bottom: none;
+        }
+
+        .product-image {
+            width: 100px;
+            height: auto;
+            margin-right: 20px;
+        }
+
+        .product-info {
+            flex: 1;
+        }
+
+        .product-title {
+            font-size: 18px;
+            color: #333;
+            text-decoration: none;
+        }
+
+        .product-title:hover {
+            text-decoration: underline;
+        }
+
+        .product-price {
+            font-size: 20px;
+            color: #388e3c;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+
+        .remove-button {
+            background-color: #ff4c4c;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .remove-button:hover {
+            background-color: #d43f3f;
+        }
+
+        @media (max-width: 600px) {
+            .product-image {
+                width: 80px; /* Responsive adjustment */
+            }
+
+            .product-title {
+                font-size: 16px; /* Responsive adjustment */
+            }
+
+            .product-price {
+                font-size: 18px; /* Responsive adjustment */
+            }
+
+            .remove-button {
+                font-size: 12px; /* Responsive adjustment */
+                padding: 8px 12px; /* Responsive adjustment */
+            }
+        }
+    </style>
+</head>
+<body>
+    {% include 'header.html' %}
+
+    {% block content %}
+    <div class="wishlist-container">
+        <h2>My Wishlist ({{ wishlist_items.count }})</h2>
+        <ul>
+            {% for item in wishlist_items %}
+            <li class="wishlist-item">
+                <img src="{{ item.product.images.first.image.url }}" alt="{{ item.product.product_name }}" class="product-image">
+                <div class="product-info">
+                    <a href="{% url 'product_detail' item.product.id %}" class="product-title">{{ item.product.product_name }}</a>
+                    <div class="product-price">
+                        Rs:{{ item.product.price }}
+                    </div>
+                </div>
+                <form method="POST" action="{% url 'remove_from_wishlist' item.product.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="remove-button">Remove</button>
+                </form>
+            </li>
+            {% empty %}
+            <p>Your wishlist is empty.</p>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endblock %}
+</body>
+</html>

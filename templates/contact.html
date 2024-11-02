@@ -1,0 +1,104 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submit a Comment</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}"> <!-- Add your CSS file -->
+    <style>
+        body {
+            background-color: #f4f7fa; /* Light background for contrast */
+            font-family: 'Arial', sans-serif; /* Modern font */
+        }
+
+        .contact-form {
+            margin-top: 50px; /* Increased top margin */
+            padding: 30px; /* Increased padding for spacious feel */
+            border-radius: 15px; /* More rounded corners */
+            background: linear-gradient(135deg, #ffffff, #e0f7fa); /* Gradient background */
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1); /* Deeper shadow for depth */
+            max-width: 500px; /* Set a maximum width for the form */
+            margin-left: auto; /* Center the form horizontally */
+            margin-right: auto; /* Center the form horizontally */
+        }
+        
+        .contact-form h2 {
+            color: #007bff; /* Header color */
+            text-align: center; /* Centered header text */
+            margin-bottom: 20px; /* Space below header */
+        }
+        
+        .form-group {
+            margin-bottom: 25px; /* Increased bottom margin for spacing */
+        }
+        
+        .form-group label {
+            font-weight: bold; /* Bold labels */
+            color: #333; /* Dark gray label color */
+            display: block; /* Block display for labels */
+            margin-bottom: 5px; /* Space below labels */
+        }
+        
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 15px; /* Increased padding for inputs */
+            border: 1px solid #ccc;
+            border-radius: 8px; /* More rounded corners */
+            transition: border-color 0.3s, box-shadow 0.3s; /* Added transition for focus */
+        }
+        
+        .form-group input:focus,
+        .form-group textarea:focus {
+            border-color: #007bff; /* Border color on focus */
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Subtle shadow on focus */
+            outline: none; /* Removed default outline */
+        }
+        
+        .submit-button {
+            padding: 12px 25px; /* Adjusted button padding */
+            background-color: #007bff; /* Button color */
+            color: #fff;
+            border: none;
+            border-radius: 8px; /* More rounded corners */
+            cursor: pointer;
+            font-size: 18px; /* Increased font size */
+            transition: background-color 0.3s, transform 0.2s; /* Added transition for hover */
+        }
+        
+        .submit-button:hover {
+            background-color: #0056b3; /* Darker blue on hover */
+            transform: translateY(-2px); /* Slight lift effect on hover */
+        }
+        
+    </style>
+</head>
+<body>
+    {% include 'header.html' %}
+
+    <!-- Contact Form -->
+<div class="contact-form">
+    <h2>Contact Us</h2>
+    <form method="POST" action="{% url 'contact_view' %}">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required>
+        </div>
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+        </div>
+        <div class="form-group">
+            <label for="message">Message:</label>
+            <textarea id="message" name="message" rows="4" required></textarea>
+        </div>
+        <button type="submit" class="submit-button">Submit</button>
+    </form>
+</div>
+
+        
+</body>
+</html>

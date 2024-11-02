@@ -1,0 +1,233 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My Orders</title>
+    <style>
+        /* General container for the entire order section */
+        .order-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+
+        /* Search bar styling */
+        .order-search {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .order-search input {
+            width: 75%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .search-button {
+            padding: 10px 20px;
+            background-color: #1976d2;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .search-button:hover {
+            background-color: #145a9e;
+        }
+
+        /* Order item styling */
+        .order-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .order-item {
+            display: flex;
+            align-items: center;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .product-image {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            margin-right: 20px;
+        }
+
+        .order-details {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .product-title {
+            font-size: 1.1rem;
+            color: #333;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .order-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .product-price {
+            color: #333;
+            font-size: 1rem;
+            font-weight: bold;
+            margin-left: 20px; /* Add margin for separation */
+        }
+
+        .order-status {
+            font-weight: bold;
+            font-size: 1rem;
+        }
+
+        .order-status.pending {
+            color: #d32f2f; /* Red for Pending */
+        }
+
+        .order-status.processing {
+            color: #1976d2; /* Blue for Processing */
+        }
+
+        .order-status.packed {
+            color: #fbc02d; /* Yellow for Packed */
+        }
+
+        .order-status.shipped {
+            color: #000; /* Black for Shipped */
+        }
+
+        .order-status.delivered {
+            color: #388e3c; /* Green for Delivered */
+        }
+
+        .user-details {
+            margin-top: 10px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            background-color: #f1f1f1;
+        }
+
+        .review-link {
+            font-size: 0.9rem;
+            color: #1976d2;
+            text-decoration: none;
+        }
+
+        .review-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Remove button styling */
+        .remove-button {
+            width: 80px; /* Set a specific width */
+            padding: 5px; /* Adjust padding if necessary */
+            background-color: #d32f2f;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-left:970px; /* Align to the right */
+        }
+        
+
+        .remove-button:hover {
+            background-color: #a62828;
+        }
+
+        /* Responsive styling */
+        @media (max-width: 768px) {
+            .order-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .product-image {
+                margin-bottom: 15px;
+            }
+
+            .order-search input {
+                width: 60%;
+            }
+        }
+    </style>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/orders.css' %}"> <!-- Link to external CSS -->
+</head>
+<body>
+    <div class="order-container">
+        <h1>My Orders</h1>
+    
+        <!-- Search bar -->
+        <div class="order-search">
+            <input type="text" id="search-input" placeholder="Search your orders here" oninput="filterOrders()">
+            <button class="search-button">Search Orders</button>
+        </div>
+    
+        <!-- Order list -->
+        <div class="order-list">
+            {% for order in orders %}
+                <div class="order-item">
+                    <img src="{{ order.product.images.first.image.url }}" alt="{{ order.product.images.first.alt_text }}" class="product-image">
+            
+                    <!-- Order details -->
+                    <div class="order-details">
+                        <div class="product-title">{{ order.product.product_name }}</div>
+                        <div class="order-info">
+                            <span>Order Date: {{ order.created_at }}</span>
+                            <span class="product-price">Amount: {{ order.amount }}</span>
+                            <span class="order-status {{ order.status|lower }}">{{ order.status }}</span> <!-- Updated here -->
+                        </div>
+                        <span><b>Payment Method:</b> {{ order.payment_method }}</span>
+                        <form action="{% url 'remove_order' order.id %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit" class="remove-button">Remove</button>
+                        </form>  
+                        <form action="{% url 'cancel_order' order.id %}" method="post" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="cancel-button">Cancel Order</button>
+                        </form>  
+                                        
+                     </div>
+                </div>
+            {% empty %}
+                <div class="order-item">
+                    <p>No orders found.</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <script>
+        function filterOrders() {
+            const searchQuery = document.getElementById('search-input').value.toLowerCase();
+            const orderItems = document.querySelectorAll('.order-item');
+
+            orderItems.forEach(item => {
+                const productTitle = item.querySelector('.product-title').textContent.toLowerCase();
+                if (productTitle.includes(searchQuery)) {
+                    item.style.display = ''; // Show the item
+                } else {
+                    item.style.display = 'none'; // Hide the item
+                }
+            });
+        }
+    </script>
+</body>
+</html>

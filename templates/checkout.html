@@ -1,0 +1,326 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - WoodCrest</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f0e6d2;
+            color: #4a3728;
+            padding-top: 76px; /* Increased to accommodate larger navbar */
+        }
+
+        .navbar {
+            background-color: #ffffff;
+            padding: 15px 0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar-brand img {
+            max-height: 50px;
+        }
+
+        .navbar-nav .nav-link {
+            color: #8b4513 !important;
+            font-size: 18px;
+            margin: 0 10px;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: #a0522d !important;
+        }
+
+        .navbar-toggler {
+            border-color: #8b4513;
+        }
+
+        .navbar-toggler-icon {
+            background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3e%3cpath stroke='rgba(139, 69, 19, 0.5)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+        }
+
+        .checkout-container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 30px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .billing-order-container {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+
+        .checkout-form, .order-summary {
+            background-color: #faf0e6;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            flex: 1;
+            min-width: 300px;
+        }
+
+        h2, h3, h4 {
+            color: #8b4513;
+            margin-bottom: 20px;
+        }
+
+        .form-control {
+            border-color: #d2b48c;
+            border-radius: 5px; /* Rounded corners for input fields */
+            padding: 10px; /* Increased padding for better usability */
+            transition: border-color 0.3s ease; /* Smooth transition for focus */
+        }
+
+        .form-control:focus {
+            border-color: #a0522d; /* Change border color on focus */
+            box-shadow: 0 0 5px rgba(160, 82, 45, 0.5); /* Subtle shadow on focus */
+        }
+
+        .btn-primary {
+            background-color: #8b4513;
+            border-color: #8b4513;
+            border-radius: 5px; /* Rounded corners for buttons */
+        }
+
+        .btn-primary:hover {
+            background-color: #a0522d;
+            border-color: #a0522d;
+        }
+
+        .table {
+            background-color: #fff;
+            border-radius: 8px; /* Rounded corners for table */
+            overflow: hidden; /* Prevents overflow of rounded corners */
+        }
+
+        .table th {
+            background-color: #d2b48c;
+            color: #fff; /* White text for better contrast */
+        }
+
+        .total-section {
+            background-color: #faf0e6;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            margin-top: 30px;
+            text-align: right;
+        }
+
+        #order-total {
+            font-size: 1.2em;
+            color: #8b4513;
+            font-weight: bold;
+        }
+
+        .modal-content {
+            background-color: #faf0e6;
+            border-radius: 8px; /* Rounded corners for modal */
+        }
+
+        .modal-header {
+            border-bottom: 1px solid #d2b48c; /* Border for modal header */
+        }
+
+        .form-check {
+            margin-bottom: 10px;
+        }
+
+        .form-check-input {
+            margin-top: 0.3rem;
+        }
+
+        .form-check-label {
+            margin-left: 5px;
+            color: #4a3728;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .billing-order-container {
+                flex-direction: column;
+            }
+
+            .checkout-form, .order-summary {
+                margin: 0 auto;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <img src="{% static 'img/home/log10.png' %}" alt="WoodCrest Logo">
+            </a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Products</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Cart</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Account</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <div class="billing-order-container" style="display: flex; justify-content: space-between; align-items: flex-start;color:black;margin-top:100px;">
+            <!-- Product Details -->
+            <div class="checkout-form bg-white p-4 border rounded" style="font-size:14px;color:black;margin-left:80px;">
+                <h2 style="font-size:20px;color:black;margin-left:80px;">Billing Address</h2>
+                <div id="profile-info">
+                    <p id="username"> {{ user.username }}</p>
+                    <p id="email">{{ user.email }}</p>
+                    <p id="mobile_number">Mobile Number: {{ user.mobile_number }}</p>
+                    <p id="address">Address: {{ user.address }}</p>
+                    <p id="pincode">Pincode: {{ user.pincode }}</p>
+                </div>
+                <a href="#" class="btn btn-secondary" id="edit-button" data-toggle="modal" data-target="#editModal">Edit</a>
+            </div>
+        
+            <!-- Edit Profile Modal -->
+            <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="editModalLabel">Edit Profile</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <form method="post" action="{% url 'edit_profile' %}">
+                                {% csrf_token %}
+                                <div class="form-group">
+                                    <label for="username">Username</label>
+                                    <input type="text" class="form-control" id="username" name="username" value="{{ user.username }}" style="width: 100%;">
+                                </div>
+                                <div class="form-group">
+                                    <label for="email">Email</label>
+                                    <input type="email" class="form-control" id="email" name="email" value="{{ user.email }}" style="width: 100%;">
+                                </div>
+                                <div class="form-group">
+                                    <label for="mobile_number">Mobile Number</label>
+                                    <input type="text" class="form-control" id="mobile_number" name="mobile_number" value="{{ user.mobile_number }}" style="width: 100%;">
+                                </div>
+                                <div class="form-group">
+                                    <label for="address">Address</label>
+                                    <input type="text" class="form-control" id="address" name="address" value="{{ user.address }}" style="width: 100%;">
+                                </div>
+                                <div class="form-group">
+                                    <label for="pincode">Pincode</label>
+                                    <input type="text" class="form-control" id="pincode" name="pincode" value="{{ user.pincode }}" style="width: 100%;">
+                                </div>
+                                <div class="form-group">
+                                    <label for="address_line">Address Line</label>
+                                    <input type="text" id="address_line" name="address_line" class="form-control" maxlength="255" required>
+                                </div>
+                                
+                                <!-- Landmark (optional) -->
+                                <div class="form-group">
+                                    <label for="landmark">Landmark (optional)</label>
+                                    <input type="text" id="landmark" name="landmark" class="form-control" maxlength="255">
+                                </div>
+                                <div class="form-group">
+                                    <label for="city">City</label>
+                                    <input type="text" id="city" name="city" class="form-control" maxlength="100" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="district">District</label>
+                                    <input type="text" id="district" name="district" class="form-control" maxlength="100" required>
+                                </div>
+                                
+                                <!-- Pincode -->
+                                <div class="form-group">
+                                    <label for="pincode">Pincode</label>
+                                    <input type="text" id="pincode" name="pincode" class="form-control" maxlength="6" required pattern="\d{6}" title="Enter a valid 6-digit pincode">
+                                </div>
+                                                            
+                                <button type="submit" class="btn btn-primary">Save changes</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="checkout-form bg-white p-4 border rounded" style="font-size:14px;color:black;margin-right:80px;">
+                <h3>Payment Method</h3>
+                <form method="post" action="{% url 'place_order' %}">
+                    {% csrf_token %}
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="payment_method" id="cash_on_delivery" value="cash_on_delivery" checked>
+                        <label class="form-check-label" for="cash_on_delivery">Cash on Delivery</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="payment_method" id="online_payment" value="online_payment">
+                        <label class="form-check-label" for="online_payment">Online Payment</label>
+                    </div>
+                    
+                    <input type="hidden" name="amount" value="{{ grand_total }}">
+                    <input type="hidden" name="product_id" value="{{ product.id }}"> <!-- Add product id -->
+                
+                    <button type="submit" class="btn btn-primary btn-block">Proceed to Payment</button>
+                </form>
+                
+            </div>
+            <!-- Order Summary -->
+            <div class="order-summary bg-white p-4 border rounded" style="font-size:14px;color:black;margin-right:80px;">
+                <h3>Order Summary</h3>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Item</th>
+                            <th>Quantity</th>
+                            <th>Price</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Loop through products in cart -->
+                        {% for item in cart_items %}
+                        <tr>
+                            <td>{{ item.product.product_name }}</td>
+                            <td>{{ item.quantity }}</td>
+                            <td>{{ item.total_cost }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <div class="total-section">
+                    <h4>Total</h4>
+                    <p id="order-total">$ {{ grand_total }}</p>
+                </div>
+                <a href="#" class="btn btn-primary btn-block">Proceed to Payment</a>
+            </div>
+        </div>
+    </main>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    
+</body>
+</html>

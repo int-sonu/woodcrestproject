@@ -1,0 +1,150 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'css/admin_styles.css' %}">
+    <!-- Feather Icons -->
+    <link rel="stylesheet" href="https://unpkg.com/feather-icons/dist/feather.css">
+    <style>
+        .feather {
+            width: 16px;
+            height: 16px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-dark sticky-top" style="background-color: #f1ddcf;">
+        <a class="navbar-brand col-md-3 col-lg-2 mr-0 d-flex align-items-center" href="#">
+            <img src="{% static 'img/home/log10.png' %}" width="180" height="50" class="d-inline-block align-middle" alt="" style="background-color: #f1ddcf;margin-top:50px;position:fixed;">
+        </a>
+        <div class="navbar-heading text-center flex-grow-1" style="text-align: center; flex-grow: 1;">
+            <h1 style="font-size: 2rem; color: #333; margin: 0;">Seller Dashboard</h1>
+        </div>
+        
+        <ul class="navbar-nav px-3 ml-auto"style="background-color: #f1ddcf;margin-top:15px;margin-left:20px;">
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color: black;">
+                    Welcome, {{ user.username }}!
+                </a>
+                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
+                    <a class="dropdown-item" href="{% url 'seller_profile' %}"><i data-feather="user"></i>Update Profile</a>
+                    <a class="dropdown-item" href="{% url 'logout' %}"><i data-feather="key"></i> Change Password</a>
+                    <a class="dropdown-item" href="{% url 'logout' %}"><i data-feather="log-out"></i> Logout</a>
+                </div>
+            </li>
+        </ul>
+    </nav>
+    
+        
+        <div class="container-fluid">
+            <div class="row">
+                <nav class="col-md-2 d-none d-md-block bg-salmon sidebar">
+                    <div class="sidebar-sticky">
+                        <ul class="nav flex-column">
+                            <li class="nav-item">
+                                <a class="nav-link active mt-3" href="{% url 'seller_dashboard' %}">
+                                    <i data-feather="home"></i>
+                                    Dashboard <span class="sr-only">(current)</span>
+                                </a>
+                            </li>
+    
+                            <li class="nav-item">
+                                <a class="nav-link mt-3" href="{% url 'seller_view_categories' %}">
+                                    <i data-feather="layers"></i>
+                                    Categories
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link mt-3" href="{% url 'seller_view_subcategories' %}">
+                                    <i data-feather="shopping-cart"></i>
+                                    SubCategories
+                                </a>
+                            </li>
+                            
+                            <li class="nav-item">
+                                <a class="nav-link mt-3" href="{% url 'view_product' %}">
+                                    <i data-feather="package"></i>
+                                    Products
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link mt-3" href="{% url 'seller_orders' %}">
+                                    <i data-feather="package"></i>
+                                    Orders
+                                </a>
+                            </li>
+    
+                            
+                            <li class="nav-item">
+                                <a class="nav-link mt-3" href="{% url 'seller_page' %}">
+                                    <i data-feather="shopping-cart"></i>
+                                    Custom Details
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link mt-3" href="{% url 'seller_comments' %}">
+                                    <i data-feather="shopping-cart"></i>
+                                    Feedback
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+
+                
+            <main role="main" class="col-md-10 ml-sm-auto col-lg-10 px-4">
+                <!-- Page Header -->
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">Customer Feedback</h1>
+                </div>
+
+    <div class="container">
+
+       
+        {% if comments %}
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Rating</th>
+                        <th>Comment</th>
+                        <th>Created At</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for comment in comments %}
+                        <tr>
+                            <td>{{ comment.name }}</td>
+                            <td>{{ comment.email }}</td>
+                            <td>{{ comment.rating }}</td>
+                            <td>{{ comment.comment }}</td>
+                            <td>{{ comment.created_at|date:"F j, Y" }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No comments available yet.</p>
+        {% endif %}
+    </div>
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- Feather Icons JS -->
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script>
+        feather.replace();
+    </script>
+    <!-- Custom JS -->
+    <script src="{% static 'js/admin_dashboard.js' %}"></script>
+</body>
+</html>

@@ -1,0 +1,911 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ product.product_name }}</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:400,500,600,700">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'libs/font-awesome/css/font-awesome.min.css' %}">
+    <link rel="stylesheet" href="{% static 'libs/owl-carousel/assets/owl.carousel.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/banner.css' %}">
+    <link rel="stylesheet" href="{% static 'css/product.css' %}">
+    <link rel="stylesheet" href="{% static 'css/mstyle.css' %}">
+    <link rel="stylesheet" href="{% static 'css/reponsive.css' %}">
+    <style>
+        .header-top {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            height: 70px;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            padding-top: 70px;
+        }
+
+        .product-detail {
+            display: flex;
+            align-items: flex-start;
+            margin-top: 10px;
+        }
+
+        .product-image {
+            flex: 1;
+            margin-top: 200px;
+        }
+
+        .product-info {
+            flex: 1;
+            margin-left: 20px;
+            margin-top: 200px;
+        }
+
+        .product-info h1 {
+            font-size: 2rem;
+        }
+
+        .product-info p {
+            font-size: 1rem;
+        }
+
+        .carousel-item img {
+            max-width: 100%;
+            height: auto;
+            max-height: 200px; /* Reduced image height */
+            object-fit: cover;
+        }
+
+        .buttons {
+            margin-top: 20px;
+        }
+
+        .buttons button {
+            margin-right: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-control {
+            margin-top: 0.5rem;
+        }
+
+        .header-top {
+            padding: 5px 0;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .menu-top .nav-link {
+            font-size: 14px;
+            padding: 5px 10px;
+            margin: 0 5px;
+        }
+
+        .mobile-logo img,
+        .header-top #logo img {
+            max-height: 50px;
+            width: auto;
+        }
+
+        .search_widget input {
+            font-size: 14px;
+            padding: 5px 10px;
+        }
+
+        .cart-icon i,
+        .my-account i {
+            font-size: 16px;
+        }
+
+        .my-account span,
+        .cart-icon span {
+            font-size: 14px;
+        }
+
+        .dropdown-menu {
+            font-size: 14px;
+        }
+
+        #search_widget {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            flex-grow: 1;
+            margin-right: 0;
+        }
+
+        .cart-icon {
+            margin-left: 0px;
+            display: flex;
+            align-items: center;
+        }
+
+        .my-account {
+            margin-left: 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .header-top .row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .card {
+            height: 350px; /* Reduced card height */
+        }
+
+        .card-body {
+            padding: 10px; /* Reduced padding */
+        }
+
+        .card h5 {
+            font-size: 14px; /* Smaller font size for product name */
+            margin-top: 10px; /* Reduced margin */
+        }
+
+        .card p {
+            font-size: 16px; /* Smaller font size for price */
+        }
+
+        .btn {
+            font-size: 14px; /* Smaller font size for button */
+        }
+
+        .pagination .page-item .page-link {
+            color: #007bff;
+            text-decoration: none;
+            margin: 0 5px;
+        }
+        
+        .pagination .page-item.active .page-link {
+            background-color: #007bff;
+            border-color: #007bff;
+            color: white;
+        }
+        
+        .pagination .page-item .page-link:hover {
+            background-color: #0056b3;
+            color: white;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 250px;
+            padding: 15px;
+            border-right: 1px solid #ddd;
+            position: fixed;
+            top: 70px; /* Below the header */
+            bottom: 0;
+        }
+
+        .sidebar h4 {
+            margin-bottom: 20px;
+        }
+
+        .sidebar .form-check {
+            margin-bottom: 10px;
+        }
+
+        .sidebar .form-check input {
+            margin-right: 10px;
+        }
+
+        .sidebar .btn {
+            margin-top: 20px;
+        }
+
+        /* Product Container */
+        .product-container {
+            display: flex;
+            border: 1px solid #ddd;
+            padding: 20px;
+            max-width: 900px;
+            margin: 20px auto;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Image Section */
+        .product-image img {
+            max-width: 250px;
+            height: auto;
+            margin-right: 20px;
+        }
+
+        /* Product Details */
+        .product-details {
+            max-width: 600px;
+        }
+
+        .product-details h2 {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        /* Ratings and Reviews */
+        .rating-reviews {
+            margin: 10px 0;
+            color: #388E3C;
+        }
+
+        .rating {
+            font-weight: bold;
+            color: #4CAF50;
+        }
+
+        .reviews {
+            margin-left: 10px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        /* Product Specifications */
+        .product-specs {
+            list-style: none;
+            padding: 0;
+            margin: 10px 0;
+            font-size: 0.9rem;
+            color: #555;
+        }
+
+        .product-specs li {
+            margin-bottom: 5px;
+        }
+
+        /* Pricing */
+        .pricing {
+            margin: 20px 0;
+        }
+
+        .current-price {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #E74C3C;
+            margin-bottom: 5px;
+        }
+
+        .original-price {
+            text-decoration: line-through;
+            color: #999;
+            margin-right: 10px;
+        }
+
+        .discount {
+            color: #388E3C;
+            font-weight: bold;
+        }
+
+        /* Delivery and Offer Details */
+        .delivery-offer {
+            font-size: 0.9rem;
+            color: #388E3C;
+            margin-bottom: 5px;
+        }
+
+        .extra-offer, .bank-offer {
+            font-size: 0.9rem;
+            color: #388E3C;
+            margin-bottom: 5px;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+        /* Dropdown Container */
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+/* Dropdown Button */
+.dropbtn {
+    background-color: white;
+    color: black;
+    padding: 10px 16px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+}
+
+/* Dropdown Content (hidden by default) */
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: white;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+/* Links inside dropdown */
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+/* Change link color on hover */
+.dropdown-content a:hover {
+    background-color: #f1f1f1;
+}
+
+/* Show the dropdown on hover */
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+/* Change button color on hover */
+.dropdown:hover .dropbtn {
+    background-color: #f9f9f9;
+}
+
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <header>
+        <div class="header-top">
+            <div class="container">
+                <div class="row" style="margin-left: -100px;">
+                    <!-- logo -->
+                    <div class="col-sm-5 col-md-2 d-flex align-items-center">
+                        <div id="logo">
+                            <img class="img-fluid" src="{% static 'img/home/log10.png' %}" alt="logo">
+                        </div>
+                    </div>
+                    <!-- menu -->
+                    <div class="main-menu col-sm-3 col-md-5 align-items-center justify-content-center navbar-expand-md">
+                        <div class="menu navbar collapse navbar-collapse">
+                            <ul class="menu-top navbar-nav" style="margin-right: 200px;">
+
+                                {% for category in categories %}
+                                    <li class="nav-item"><a class="nav-link" href="#">{{ category.name }}</a></li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                    <!-- search -->
+                    <div id="search_widget" class="col-sm-7 col-md-5 d-flex justify-content-end">
+                        <form method="get" action="{% url 'search_products' %}">
+                            <input type="text" name="s" value="" placeholder="Search ..." class="ui-autocomplete-input" autocomplete="off">
+                            <button type="submit">
+                                <i class="fa fa-search"></i>
+                            </button>
+                        </form>
+                        {% if user.is_authenticated %}
+                        <!-- Display cart icon and custom dropdown -->
+                        <div class="col-sm-2 col-md-2 align-items-center d-flex">
+                            <div class="d-flex align-items-center">
+                                <a href="" class="cart-icon" style="display: flex; align-items: center; text-decoration: none;">
+                                    <i class="fa fa-shopping-cart" style="font-size: 20px; margin-left: 5px; margin-top:16px; position: relative;">
+                                        <!-- Badge to display item count -->
+                                        <span class="badge" style="position: absolute; top: -10px; right: -10px; background-color: red; color: white; border-radius: 50%; padding: 3px 7px; font-size: 12px;">
+                                            {{ cart_item_count|default:"0" }}  <!-- Show item count or 0 if not available -->
+                                        </span>
+                                    </i>
+                                    <span style="margin-top:15px; margin-left:20px;margin-right:30px;">Cart</span>
+                                </a>
+                               
+
+                            </div>
+                        </div>
+{% else %}
+    <!-- Provide a link to the login page -->
+    <div class="col-sm-2 col-md-2 align-items-center d-flex">
+        <a href="{% url 'login' %}" class="cart-icon" style="display: flex; align-items: center; text-decoration: none;">
+            <i class="fa fa-shopping-cart" style="font-size: 20px; margin-left: 5px; margin-top:16px;">
+                
+            </i>
+            <span style="margin-top:15px;margin-left:8px;">Cart</span>
+        </a>
+       
+    </div>
+{% endif %}
+<a class="seller" href="{% url 'register' %}" style="display: flex; align-items: center; margin-left: 15px; color:black; border-radius: 5px;">
+    <i class="fa fa-user-plus" style="margin-right: 5px;"></i>
+    <span>Become a Seller</span>
+</a>
+               
+    <div style="display: flex; flex-direction: column; gap: 10px; align-items: flex-start;">
+        <div>
+            
+
+            
+        </div>
+        <div>
+            {% if user.is_authenticated %}
+             <div style="display: flex; flex-direction: column; gap: 10px; align-items: flex-start;">
+                <div>
+
+                    <div class="dropdown">
+                        <a class="my-account" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="display: flex; align-items: center; text-decoration: none;">
+                            <i class="fa fa-user-circle" style="margin-left:12px;"></i>
+                            <span >Account</span>
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                            <a class="dropdown-item" href="{% url 'update_profile' %}"><i class="fa fa-user-circle" style="margin-right: 5px;"></i> Profile</a>
+                            <a class="dropdown-item" href="#"><i class="fa fa-shopping-cart" style="margin-right: 5px;"></i> Orders</a>
+                            <a class="dropdown-item" href="#"><i class="fa fa-heart" style="margin-right: 5px;"></i> Wishlists</a>
+                            <a class="dropdown-item" href="#"><i class="fa fa-phone" style="margin-right: 5px;"></i> Contact Us</a>
+                            <a class="dropdown-item" href="{% url 'logout' %}"><i class="fa fa-sign-out" style="margin-right: 5px;"></i> Logout</a>
+                        </div>
+                    </div>
+                    {% else %}
+                    <!-- Login link for non-authenticated users -->
+                    <a class="login" href="{% url 'login' %}" rel="nofollow" title="Login" style="display: flex; align-items: center; text-decoration: none;">
+                        <i class="fa fa-sign-in" style="margin-right: 5px;"></i>
+                        <span>Login</span>
+                    </a>
+                    {% endif %}
+                </div>
+
+                <!-- Custom Button -->
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+</div>
+</header>
+    
+         <!-- Main Content -->
+    <main>
+        <div class="container" style="margin-right:370px;">
+            <div class="row">
+                <!-- Sidebar Filter -->
+                <aside class="sidebar" style="margin-top:30px;">
+                    <h4>Filter Products</h4>
+                    <form method="GET" action="{% url 'product_list' %}">
+                        <!-- Wood Type Filters -->
+                        <div class="form-group">
+                            <h5>Select Wood Type</h5>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="wood_type" value="TEAK" id="wood_teak">
+                                <label class="form-check-label" for="wood_teak">TEAK</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="wood_type" value="MAHOGONY" id="wood_mahogany">
+                                <label class="form-check-label" for="wood_mahogany">MAHOGONY</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="wood_type" value="OAK" id="wood_oak">
+                                <label class="form-check-label" for="wood_oak">OAK</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="wood_type" value="WALNUT" id="wood_walnut">
+                                <label class="form-check-label" for="wood_walnut">WALNUT</label>
+                            </div>
+                        
+<br>                                <div class="form-group">
+                                    <h5>Price Range</h5>
+                                    <label for="priceRange">Price Range:</label>
+                                    <input type="range" class="form-control" id="priceRange" name="price_range" min="0" max="200000" step="1000" oninput="updatePriceValue(this.value)" value="200000">
+                                    <span id="priceValue">200000</span> <!-- This span will show the selected price -->
+                                </div>
+                            
+                                <!-- Apply Filters Button -->
+                                <button type="submit" class="btn btn-primary">Apply Filters</button>
+                                <button type="button" class="btn btn-secondary" onclick="clearFilters()">Clear</button>
+                            </form>
+                            
+                            
+                    </aside>
+                </div>
+            </div>
+            
+        <script>
+            function clearFilters() {
+                // Redirect to the product list page without any query parameters
+                window.location.href = "{% url 'product_list' %}";
+            }
+        </script>
+        
+
+        <div class="container mt-4" style="margin-left:300px;">
+            <div class="product-image" style="color:black;margin-top:50px;">
+    
+                <h2>{{ subcategory.sub_name }}</h2>
+                <style>
+                    .dropdown {
+                        position: relative;
+                        display: inline-block;
+                    }
+                
+                    .dropbtn {
+                        background-color: #4CAF50;
+                        color: white;
+                        padding: 16px;
+                        font-size: 16px;
+                        border: none;
+                        cursor: pointer;
+                    }
+                
+                    .dropdown-content {
+                        display: none;
+                        position: absolute;
+                        background-color: #f9f9f9;
+                        min-width: 200px; /* Adjust the width as needed */
+                        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+                        z-index: 1;
+                    }
+                
+                    .dropdown-content a {
+                        color: black;
+                        padding: 12px 16px;
+                        text-decoration: none;
+                        display: block;
+                    }
+                
+                    .dropdown-content a:hover {
+                        background-color: #f1f1f1;
+                    }
+                
+                    .dropdown:hover .dropdown-content {
+                        display: block;
+                    }
+                
+                    .dropdown:hover .dropbtn {
+                        background-color: #3e8e41;
+                    }
+                </style>
+                <div class="dropdown" style="margin-bottom: 20px; margin-left: 960px;">
+                    <button class="dropbtn">Best selling &#9662;</button>
+                    <div class="dropdown-content" style="width: 220px;">  <!-- Set the desired width here -->
+                        <a href="{% url 'product_list_view' %}?sort=best_selling">Best Selling</a>
+                        <a href="{% url 'product_list_view' %}?sort=low_to_high">Price: Low to High</a>
+                        <a href="{% url 'product_list_view' %}?sort=high_to_low">Price: High to Low</a>
+                        <a href="{% url 'product_list_view' %}?sort=alphabetical_az">Alphabetically: A-Z</a>
+                        <a href="{% url 'product_list_view' %}?sort=alphabetical_za">Alphabetically: Z-A</a>
+                        <a href="{% url 'product_list_view' %}?sort=newest_first">Newest First</a>
+                    </div>
+                </div>    
+                </div>
+                <div class="row">
+                    {% for product in products %}
+                    <div class="col-md-4 mb-4">
+                        <div class="card" style="height:180px;margin-width:450px;"> <!-- Set height to auto for flexibility -->
+                            <div class="row no-gutters"> <!-- No gap between image and description -->
+                                <div class="col-md-5"> <!-- Image column -->
+                                    <div class="carousel slide" id="carousel-{{ product.id }}" data-ride="carousel">
+                                        <div class="carousel-inner">
+                                            {% for image in product.images.all %}
+                                            <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                                                <img src="{{ image.image.url }}" class="d-block w-100" alt="{{ image.alt_text }}" style="height: 150px;"> <!-- Adjust image height -->
+                                            </div>
+                                            {% endfor %}
+                                        </div>
+                                        <a class="carousel-control-prev" href="#carousel-{{ product.id }}" role="button" data-slide="prev">
+                                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                            <span class="sr-only">Previous</span>
+                                        </a>
+                                        <a class="carousel-control-next" href="#carousel-{{ product.id }}" role="button" data-slide="next">
+                                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                            <span class="sr-only">Next</span>
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="col-md-7"> <!-- Description column -->
+                                    <div class="card-body" style="color:black; padding: 10px;"> <!-- Reduced padding -->
+                                        <h5 style="color:black;margin-top:10px;font-size:14px;">{{ product.product_name }}</h5> <!-- Smaller font size -->
+                                        <div class="form-group">
+                                            <strong style="color:black;">Material:</strong> {{ product.wood }}
+                                        </div>
+                                        <p style="color:red;font-size:16px;">Rs.{{ product.price }}</p> <!-- Price section -->
+                                        <a href="{% url 'product_detail' product.id %}" class="btn btn-primary">View Details</a> <!-- Details button -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="pagination">
+                    <ul class="pagination justify-content-center">
+                        {% for num in products.paginator.page_range %}
+                            <li class="page-item {% if products.number == num %}active{% endif %}">
+                                <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                            </li>
+                        {% endfor %}
+                        {% if products.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ products.next_page_number }}" aria-label="Next">
+                                    Next
+                                </a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+           
+
+    <!-- Footer -->
+     <!-- footer -->
+       <footer class="footer-one"style="margin-left:260px;margin-height:20px;">
+        <div class="inner-footer">
+            <div class="container">
+                <div class="footer-top col-lg-10 col-xs-10">
+                    <div class="row">
+                        <div class="tiva-html col-lg-4 col-md-10 col-xs-10">
+                            <div class="block">
+                                <div class="block-content">
+                                   
+                                 
+                                </div>
+                            </div>
+                            <div class="block">
+                                <div class="block-content">
+                                    <ul>
+                                        <li>
+                                            <a href="#">About Us</a>
+                                        </li>
+                                        <li>
+                                            <a href="#">Reasons to shop</a>
+                                        </li>
+                                        <li>
+                                            <a href="#">What our customers say</a>
+                                        </li>
+                                        <li>
+                                            <a href="#">Meet the team</a>
+                                        </li>
+                                        <li>
+                                            <a href="#">Contact our buyers</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="block">
+                                <div class="block-content">
+                                    <p class="img-payment">
+                                        <img class="img-fluid" src="{% static 'img/home/payment-footer.png' %}" alt="img">
+                                    </p>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tiva-html col-lg-4 col-md-6">
+                            <div class="block m-top">
+                                <div class="title-block">
+                                    Contact Us
+                                </div>
+                                <div class="block-content">
+                                    <div class="contact-us">
+                                        <div class="title-content">
+                                            <i class="fa fa-home" aria-hidden="true"></i>
+                                            <span>Address :</span>
+                                        </div>
+                                        <div class="content-contact address-contact">
+                                            <p>123 Suspendis matti, Visaosang Building VST District NY Accums, North American</p>
+                                        </div>
+                                    </div>
+                                    <div class="contact-us">
+                                        <div class="title-content">
+                                            <i class="fa fa-envelope" aria-hidden="true"></i>
+                                            <span>Email :</span>
+                                        </div>
+                                        <div class="content-contact mail-contact">
+                                            <p>woodcrest751@gmail.com</p>
+                                        </div>
+                                    </div>
+                                    <div class="contact-us">
+                                        <div class="title-content">
+                                            <i class="fa fa-phone" aria-hidden="true"></i>
+                                            <span>contact :</span>
+                                        </div>
+                                        <div class="content-contact phone-contact">
+                                            <p>+91-95603-45128</p>
+                                        </div>
+                                    </div>
+                                    <div class="contact-us">
+                                        <div class="title-content">
+                                            <i class="fa fa-clock-o" aria-hidden="true"></i>
+                                            <span>Opening Hours :</span>
+                                        </div>
+                                        <div class="content-contact hours-contact">
+                                            <p>Monday - Sunday / 08.00AM - 19.00</p>
+                                            <span>(Except Holidays)</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                       
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="tiva-copyright">
+            <div class="container">
+                <div class="row">
+                    
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- back top top -->
+    <div class="back-to-top">
+        <a href="#">
+            <i class="fa fa-long-arrow-up"></i>
+        </a>
+    </div>
+
+   
+
+    <!-- menu mobie right -->
+    <div id="mobile-pagemenu" class="mobile-boxpage d-flex hidden-md-up active d-md-none">
+        <div class="content-boxpage col">
+            <div class="box-header d-flex justify-content-between align-items-center">
+                <div class="title-box">Menu</div>
+                <div class="close-box">Close</div>
+            </div>
+            <div class="box-content">
+                <nav>
+                    <!-- Brand and toggle get grouped for better mobile display -->
+                    <div id="megamenu" class="clearfix">
+                        <ul class="menu level1">
+                            <li class="item home-page has-sub">
+                                <span class="arrow collapsed" data-toggle="collapse" data-target="#home1" aria-expanded="true" role="status">
+                                    <i class="zmdi zmdi-minus"></i>
+                                    <i class="zmdi zmdi-plus"></i>
+                                </span>
+                                <a href="index-2.html" title="Home">
+                                    <i class="fa fa-home" aria-hidden="true"></i>Home</a>
+                                <div class="subCategory collapse" id="home1" aria-expanded="true" role="status">
+                                    <ul>
+                                       
+                                    </ul>
+                                </div>
+                            </li>
+                            <li class="item has-sub">
+                                <span class="arrow collapsed" data-toggle="collapse" data-target="#blog" aria-expanded="false" role="status">
+                                    <i class="zmdi zmdi-minus"></i>
+                                    <i class="zmdi zmdi-plus"></i>
+                                </span>
+                                
+                                </div>
+                            </li>
+                            <li class="item group has-sub">
+                                <span class="arrow collapsed" data-toggle="collapse" data-target="#page" aria-expanded="false" role="status">
+                                    <i class="zmdi zmdi-minus"></i>
+                                    <i class="zmdi zmdi-plus"></i>
+                                </span>
+                                <a href="#" title="Page">
+                                    <i class="fa fa-file-text-o" aria-hidden="true"></i>page</a>
+                                <div class="subCategory collapse" id="page" aria-expanded="true" role="status">
+                                    <ul class="group-page">
+                                        <li class="item container group">
+                                            <div>
+                                                <ul>
+                                                    <li class="item col-md-4 ">
+                                                        <span class="menu-title">Category Style</span>
+                                                        <div class="menu-content">
+                                                            <ul class="col">
+                                                                <li>
+                                                                    <a href="product-grid-sidebar-left.html">Product Grid (Sidebar Left)</a>
+                                                                </li>
+                                                                <li>
+                                                                    <a href="product-grid-sidebar-right.html">Product Grid (Sidebar Right)</a>
+                                                                </li>
+                                                                <li>
+                                                                    <a href="product-list-sidebar-left.html">Product List (Sidebar Left) </a>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                    </li>
+                                                    <li class="item col-md-4 html">
+                                                        <span class="menu-title">Product Detail Style</span>
+                                                        <div class="menu-content">
+                                                            <ul>
+                                                                <li>
+                                                                    <a href="product-detail.html">Product Detail (Sidebar Left)</a>
+                                                                </li>
+                                                                <li>
+                                                                    <a href="#">Product Detail (Sidebar Right)</a>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                    </li>
+                                                    <li class="item col-md-4 html">
+                                                        <span class="menu-title">Bonus Page</span>
+                                                        <div class="menu-content">
+                                                            <ul>
+                                                                <li>
+                                                                    <a href="404.html">404 Page</a>
+                                                                </li>
+                                                                <li>
+                                                                    <a href="about-us.html">About Us Page</a>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+                            <li class="item has-sub">
+                                <a href="contact.html" title="Contact us">
+                                    <i class="fa fa-map-marker" aria-hidden="true"></i>Contact us</a>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="{% static 'libs/owl-carousel/owl.carousel.min.js' %}"></script>
+    <script src="{% static 'js/main.js' %}"></script>
+    <script>
+    document.querySelector('.dropbtn').addEventListener('click', function() {
+        var dropdownContent = document.querySelector('.dropdown-content');
+        if (dropdownContent.style.display === 'block') {
+            dropdownContent.style.display = 'none';
+        } else {
+            dropdownContent.style.display = 'block';
+        }
+    });
+    
+</script>
+<script>
+    // Function to update the displayed price value as the slider is adjusted
+    function updatePriceValue(value) {
+        document.getElementById('priceValue').innerText = value;
+    }
+
+    // Set the initial value on page load
+    window.onload = function() {
+        const priceRange = document.getElementById('priceRange');
+        const priceValue = document.getElementById('priceValue');
+
+        // Set default slider value
+        priceRange.value = 200000;  // Set default slider value
+        priceValue.innerText = 200000;  // Update the displayed value
+    }
+
+    // Clear filters function
+    function clearFilters() {
+        // Reset form inputs
+        document.querySelector('form').reset();  
+
+        // Reset slider and displayed value
+        const priceRange = document.getElementById('priceRange');
+        const priceValue = document.getElementById('priceValue');
+
+        priceRange.value = 200000;
+        priceValue.innerText = 200000;
+
+        // Optionally, you may want to submit the form or redirect to reload the page with all products
+        document.querySelector('form').submit();
+    }
+</script>
+
+</body>
+
+</html>

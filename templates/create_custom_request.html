@@ -1,0 +1,328 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="zxx">
+<head>
+    <!-- Basic Page Needs -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>WoodCrest</title>
+    <meta name="keywords" content="Furniture, Decor, Interior">
+    <meta name="description" content="Furnitica - Minimalist Furniture HTML Template">
+    <meta name="author" content="tivatheme">
+
+    <!-- Mobile Meta -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <!-- Google Fonts -->
+    <link rel="stylesheet" href="{% static 'https://fonts.googleapis.com/css?family=Poppins:400,500,600,700' %}">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Vendor CSS -->
+    <link rel="stylesheet" href="{% static 'libs/font-awesome/css/font-awesome.min.css' %}">
+    <link rel="stylesheet" href="{% static 'libs/font-material/css/material-design-iconic-font.min.css' %}">
+    <link rel="stylesheet" href="{% static 'libs/nivo-slider/css/nivo-slider.css' %}">
+    <link rel="stylesheet" href="{% static 'libs/nivo-slider/css/animate.css' %}">
+    <link rel="stylesheet" href="{% static 'libs/nivo-slider/css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'libs/owl-carousel/assets/owl.carousel.min.css' %}">
+
+    <!-- Template CSS -->
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/banner.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/product.css' %}">
+    <link href="{% static 'css/mstyle.css' %}" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/reponsive.css' %}">
+
+    <!-- Add Bootstrap CDN for styling -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+       
+
+        .form-title {
+            font-size: 24px;
+            font-weight: 500;
+            margin-bottom: 20px;
+            color: #FF5722; /* Similar to the orange button */
+        }
+
+        /* Form Styles */
+        .form-group label {
+            font-weight: 600;
+        }
+
+        .form-control {
+            padding: 10px;
+            font-size: 14px;
+            border-radius: 5px;
+        }
+
+        textarea.form-control {
+            resize: none;
+        }
+
+        .btn-orange {
+            background-color: #FF5722;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-orange:hover {
+            background-color: #e64a19;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .custom-banner {
+                margin-bottom: 20px;
+            }
+        }
+        .nivoSlider img {
+            width: 80%; /* Adjust the percentage as needed */
+            height: auto; /* Maintains aspect ratio */
+            max-height: 500px; /* Set a maximum height if desired */
+            object-fit: cover; /* Ensures images fill the area without distortion */
+            display: block;
+            margin: 0 auto; /* Centers the images horizontally */
+            margin-top: 140px;
+        }
+        .large-card {
+            position: relative;
+            overflow: hidden;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+       
+        .navbar {
+            height:130px; /* Adjust height as needed */
+            line-height: 80px; /* Center text vertically */
+        }
+
+        /* Navbar Items */
+        .navbar-nav {
+            margin: 0;
+            padding: 0;
+            
+        }
+
+        .navbar-nav li {
+            padding: 0 15px; /* Adjust spacing between items */
+        }
+
+        .navbar-nav a {
+            line-height: 80px; /* Center text vertically */
+            font-size: 16px; /* Adjust font size */
+        }
+
+        /* Logo */
+        .navbar-logo {
+            height: 60px; /* Adjust to fit within the navbar height */
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar-logo img {
+            height: 100%;
+            width: auto;
+        }   
+       
+/* Navbar Styles */
+.navbar {
+    height: 140px; /* Adjust height as needed */
+    line-height: 100px; /* Center text vertically */
+    margin-top:20; /* Remove top margin to prevent overlap with other content */
+
+}
+
+/* Navbar Items */
+.navbar-nav {
+    margin: 0;
+    padding: 0;
+}
+
+.navbar-nav li {
+    padding: 0 15px; /* Adjust spacing between items */
+}
+
+.navbar-nav a {
+    line-height: 80px; /* Center text vertically */
+    font-size: 16px; /* Adjust font size */
+}
+
+/* Logo */
+.navbar-logo {
+    height: 60px; /* Adjust to fit within the navbar height */
+    display: flex;
+    align-items: center;
+}
+
+.navbar-logo img {
+    height: 100%;
+    width: auto;
+}
+.nav-item {
+    margin: 0; /* Remove margin around nav items */
+}
+
+.dropdown-menu {
+    padding: 0; /* Remove padding inside dropdown menu */
+    margin: 0; /* Remove margin around dropdown menu */
+}
+
+.dropdown-item {
+    padding: 8px 16px; /* Adjust padding inside dropdown items */
+}
+
+.dropdown-menu ul {
+    padding: 0; /* Remove padding from the unordered list */
+    margin: 0; /* Remove margin from the unordered list */
+    list-style: none; /* Remove bullet points */
+}
+
+.dropdown-menu li {
+    margin: 0; /* Remove margin from dropdown items */
+}
+
+    </style>
+</head>
+
+<body id="home">
+    <header>
+        <!-- Header desktop -->
+        <div class="header-top d-xs-none">
+            <div class="container" style="margin-left:30px;">
+                <div class="row">
+                    <!-- Logo -->
+                    <div class="col-sm-4 col-md-2 d-flex align-items-center">
+                        <div id="logo" class="navbar-logo">
+                            <img class="img-fluid" src="{% static 'img/home/log10.png' %}" alt="logo">
+                        </div>
+                    </div>
+                    <!-- Menu -->
+                    <div class="main-menu col-sm-3 col-md-5 align-items-center justify-content-center navbar-expand-md">
+                        <div class="menu navbar collapse navbar-collapse" style="margin-right:30px;">
+                            <ul class="menu-top navbar-nav m-0 p-0">
+                                {% for category in custom_categories %}
+                                    <li class="nav-item dropdown mx-1">
+                                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown{{ category.id }}" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            {{ category.name }}
+                                        </a>
+                                        <div class="dropdown-menu p-0" aria-labelledby="navbarDropdown{{ category.id }}">
+                                            <ul class="m-0 p-0">
+                                                {% for subcategory in category.custom_subcategories.all %}
+                                                    <li class="dropdown-item p-2">
+                                                        {% if subcategory.sub_name == "Custom Design" %}
+                                                            <a href="{% url 'custom_page' %}" style="color: black;">{{ subcategory.sub_name }}</a>
+                                                        {% else %}
+                                                            <a href="{% url 'subcategory_detail' subcategory.id %}" style="color: black;">{{ subcategory.sub_name }}</a>
+                                                        {% endif %}
+                                                    </li>
+                                                {% empty %}
+                                                    <li class="dropdown-item p-2">
+                                                        <a href="#">No subcategories available</a>
+                                                    </li>
+                                                {% endfor %}
+                                            </ul>
+                                        </div>
+                                    </li>
+                                {% empty %}
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="#">No categories available</a>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Search Widget -->
+                    <div id="search_widget" class="col-sm-7 col-md-5 align-items-center justify-content-end d-flex">
+                        <form method="get" action="{% url 'search_products' %}" style="margin-left: 10px;">
+                            <input type="text" name="s" value="{{ query }}" placeholder="Search ..." class="ui-autocomplete-input" autocomplete="off">
+                            <button type="submit">
+                                <i class="fa fa-search"></i>
+                            </button>
+                        </form>
+                    </div>
+
+                    {% if user.is_authenticated %}
+                    <!-- Display cart icon and custom dropdown -->
+                    <div class="d-flex align-items-center">
+                    </div>
+                    {% else %}
+                    <!-- Provide a link to login -->
+                    <a href="{% url 'login' %}" style="display: flex; align-items: center; text-decoration: none;">
+                        <i class="fa fa-user" style="font-size: 20px; margin-left: 5px; margin-top: 16px;"></i>
+                        <span style="margin-top: 15px; margin-left: 10px;">Login</span>
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main content -->
+    <div class="container">
+        <div class="row">
+            <!-- Left side image section -->
+            <div class="col-md-6 d-flex align-items-center justify-content-center">
+                <div class="custom-banner">
+                    <h2>We custom-build your dream furniture</h2>
+                    <p><strong>If you can imagine it,<br>We can Make it!</strong></p>
+                    <p>Call or WhatsApp: +91-9314444747</p>
+                </div>
+            </div>
+
+            <!-- Right side form section -->
+            <div class="col-md-6" style="margin-top:180px;">
+                <h3 class="form-title">Share Your Custom Requirements</h3>
+                <form action="{% url 'create_custom_request' %}" method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="username">Name *</label>
+                        <input type="text" class="form-control" id="username" name="username" value="{{ user.username }}" readonly required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email *</label>
+                        <input type="email" class="form-control" id="email" name="email" value="{{ user.email }}" readonly required>
+                    </div>
+                    <div class="form-group">
+                        <label for="mobile_number">Phone Number *</label>
+                        <input type="tel" class="form-control" id="mobile_number" name="mobile_number" value="{{ user.mobile_number }}" placeholder="Enter your phone number" readonly  required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="pincode">Pin Code *</label>
+                            <input type="text" class="form-control" id="pincode" name="pincode" value="{{ user.pincode }}" placeholder="Enter your pin code" readonly  required>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="city">City *</label>
+                            <input type="text" class="form-control" id="city" name="city" placeholder="Enter your city" required>
+                        </div>
+                        
+                    </div>
+                    <div class="form-group">
+                        <label for="custom-requirements">Custom Requirements *</label>
+                        <textarea class="form-control" id="custom-requirements" name="custom_requirements" rows="4" placeholder="Describe your custom furniture requirements" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="image">Attach an Image (Optional)</label>
+                        <input type="file" class="form-control-file" id="image" name="image" accept="image/*">
+                    </div>
+                    <button type="submit" class="btn btn-orange">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="{% static 'libs/nivo-slider/js/jquery.nivo.slider.js' %}"></script>
+    <script src="{% static 'libs/nivo-slider/home.js' %}"></script>
+    <script src="{% static 'js/theme.js' %}"></script>
+</body>
+</html>

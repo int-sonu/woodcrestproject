@@ -1,0 +1,67 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Track Order</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/orders.css' %}"> <!-- Link to your external CSS -->
+    <style>
+        /* Add styles for the tracking container */
+        .tracking-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+        }
+        .status {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .estimated-delivery {
+            color: #388e3c; /* Green for estimated delivery */
+            margin-bottom: 20px;
+        }
+        .timeline {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .timeline-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        .timeline-item:last-child {
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="tracking-container">
+        <h1>Tracking Information for Order #{{ order.id }}</h1>
+        <p class="status">Current Status: {{ current_status }}</p>
+        <p class="estimated-delivery">Estimated Delivery: {{ estimated_delivery }}</p>
+
+        <h2>Order Timeline</h2>
+        <ul class="timeline">
+            {% for item in timeline %}
+                <li class="timeline-item">
+                    <span>{{ item.status }}</span>
+                    <span>{{ item.date|date:"F j, Y" }}</span>
+                </li>
+            {% empty %}
+                <li>No tracking information available.</li>
+            {% endfor %}
+        </ul>
+        <a href="{% url 'my_orders' %}">Back to My Orders</a>
+    </div>
+</body>
+</html>

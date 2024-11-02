@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Details</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        /* General styling */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+        .container {
+            max-width: 1200px; /* Increased width */
+            margin: 50px auto;
+            padding: 20px;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            font-family: Arial, sans-serif;
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        /* Custom table styling */
+        table {
+            width: 100%;
+            margin-bottom: 20px;
+            border-collapse: collapse;
+            background-color: #fff;
+        }
+        table th, table td {
+            border: 1px solid black;
+            padding: 10px;
+            text-align: left;
+        }
+        table th {
+            font-weight: bold;
+            background-color: #f2f2f2;
+        }
+        /* Styling for section headings */
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #f2f2f2;
+        }
+        /* Button styling */
+        .btn-secondary {
+            background-color: #ddd;
+            border-color: #bbb;
+            color: #333;
+            padding: 10px 20px;
+        }
+        .btn-secondary:hover {
+            background-color: #ccc;
+            border-color: #aaa;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Order Details</h2>
+
+        <!-- Customer Details Section -->
+        <div class="section-title" style="background-color:violet">Customer Details</div>
+        <table >
+            <tr>
+                <th>Order Number</th>
+                <td>{{ order.id }}</td>
+                <th>Full Name</th>
+                <td>{{ order.user.username }}</td>
+                <th>Contact Number</th>
+                <td>{{ order.user.mobile_number }}</td>
+            </tr>
+        </table>
+
+        <!-- Delivery Address Section -->
+        <div class="section-title" style="background-color:violet">Delivery Address</div>
+        <table>
+            <tr>
+                <th>Address Line</th>
+                <td>{{ order.user.addresses.first.address_line }}</td> <!-- Access first address or loop through addresses if multiple -->
+                <th>Landmark</th>
+                <td>{{ order.user.addresses.first.landmark }}</td>
+            </tr>
+            <tr>
+                <th>City</th>
+                <td>{{ order.user.addresses.first.city }}</td>
+                <th>District</th>
+                <td>{{ order.user.addresses.first.district }}</td>
+            </tr>
+            <tr>
+                <th>Zipcode</th>
+                <td>{{ order.user.addresses.first.pincode }}</td>
+                <th>Order Date</th>
+                <td>{{ order.created_at }}</td>
+            </tr>
+        </table>
+
+        <!-- Items Purchased Section -->
+        <div class="section-title" style="background-color:violet">Items Purchased</div>
+        <table>
+            <thead>
+                <tr>
+                    <th>S.No</th>
+                    <th>Product Name</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>{{ order.product.product_name }}</td> <!-- Displaying the product name directly -->
+                    <td>{{ order.quantity }}</td> <!-- Displaying the quantity ordered -->
+                    <td>₹{{ order.amount|floatformat:2 }}</td> <!-- Use the total amount for the price -->
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Total Amount Section -->
+        <table>
+            <tr>
+                <th>Total Amount</th>
+                <td colspan="3">₹{{ order.amount|floatformat:2 }}</td>
+            </tr>
+        </table>
+
+        <!-- Back Button -->
+        <a href="{% url 'seller_orders' %}" class="btn btn-secondary mt-4">Back to Orders</a>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

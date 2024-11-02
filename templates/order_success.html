@@ -1,0 +1,67 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Success</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" style="text-align: center; padding: 50px;">
+        <h1 style="color: green;">Thank You for Your Order!</h1>
+        <p>Your order has been successfully placed.</p>
+        <p>We appreciate your business and will process your order shortly.</p>
+        
+        <h3>Your Orders:</h3>
+        <table>
+            <tr>
+                <th>Product Image</th>
+                <th>Order ID</th>
+                <th>Product</th>
+                <th>Amount</th>
+                <th>Payment Method</th>
+                <th>Order Date</th>
+            </tr>
+            {% for order in orders %}
+            <tr>
+                <td>
+                    {% if order.product.images.exists %}  <!-- Check if images exist -->
+                        <img src="{{ order.product.images.first.image.url }}" alt="{{ order.product.images.first.alt_text }}" style="width: 50px; height: auto;">
+                    {% else %}
+                        <p>No Image Available</p>
+                    {% endif %}
+                </td>        
+                <td>{{ order.id }}</td>
+                <td>{{ order.product.product_name }}</td>
+                <td>{{ order.amount }}</td>
+                <td>{{ order.payment_method }}</td>
+                <td>{{ order.created_at }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6">No orders found.</td>  <!-- Updated to match the number of columns -->
+            </tr>
+            {% endfor %}
+        </table>
+
+        <a href="{% url 'index' %}" class="btn btn-primary">Return to Home</a>
+    </div>
+</body>
+</html>

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Order Details</title>
+</head>
+<body>
+    <h1>Order Details for Order #{{ order.id }}</h1>
+    <p>Payment Method: {{ order.payment_method }}</p>
+    <p>Created At: {{ order.created_at }}</p>
+    <p>Amount: {{ order.amount }}</p>
+    <h2>Products in this Order:</h2>
+    <ul>
+        {% for product in order.product_set.all %}
+            <li>{{ product.product_name }} - Quantity: {{ product.quantity }}</li>
+        {% empty %}
+            <li>No products found in this order.</li>
+        {% endfor %}
+    </ul>
+    <a href="{% url 'view_orders' %}">Back to Orders</a>
+</body>
+</html>

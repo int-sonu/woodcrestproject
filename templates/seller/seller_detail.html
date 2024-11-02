@@ -1,0 +1,318 @@
+
+{% load static %}
+<!DOCTYPE html>
+<!--[if IE 8 ]><html class="ie ie8" lang="en"> <![endif]-->
+<!--[if IE 9 ]><html class="ie ie9" lang="en"> <![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!-->
+<!--<![endif]-->
+<html lang="zxx">
+<head>
+    <!-- Basic Page Needs -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>WoodCrest</title>
+
+    <meta name="keywords" content="Furniture, Decor, Interior">
+    <meta name="description" content="Furnitica - Minimalist Furniture HTML Template">
+    <meta name="author" content="tivatheme">
+
+    <!-- Mobile Meta -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <!-- Google Fonts -->
+    <link rel="stylesheet" href="{% static 'https://fonts.googleapis.com/css?family=Poppins:400,500,600,700' %}">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
+
+    <!-- Vendor CSS -->
+    <link rel="stylesheet" href="{% static 'libs/bootstrap/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'libs/font-awesome/css/font-awesome.min.css' %}">
+    <link rel="stylesheet" href="{% static 'libs/font-material/css/material-design-iconic-font.min.css' %}">
+    <link rel="stylesheet" href="{% static 'libs/nivo-slider/css/nivo-slider.css' %}">
+    <link rel="stylesheet" href="{% static 'libs/nivo-slider/css/animate.css' %}">
+    <link rel="stylesheet" href="{% static 'libs/nivo-slider/css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'libs/owl-carousel/assets/owl.carousel.min.css' %}">
+
+    <!-- Template CSS -->
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/banner.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/product.css' %}">
+    <link href="{% static 'css/mstyle.css' %}" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/reponsive.css' %}">
+
+    <style>
+        /* Add this CSS to your stylesheet */
+        .nivoSlider img {
+        width: 80%; /* Adjust the percentage as needed */
+        height: auto; /* Maintains aspect ratio */
+        max-height: 500px; /* Set a maximum height if desired */
+        object-fit: cover; /* Ensures images fill the area without distortion */
+        display: block;
+        margin: 0 auto; /* Centers the images horizontally */
+        margin-top:100px;
+        }
+        .header-top {
+            background-color: #fff;
+            border-bottom: 1px solid #eaeaea;
+            height: 100px; /* Increase height */
+            display: flex;
+            align-items: center;
+        }
+        .header-top .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header-top .logo img {
+            height: 60px; /* Adjust logo size */
+        }
+        .header-top .nav {
+            display: flex;
+            align-items: center;
+        }
+        .header-top .nav-item {
+            margin-left: 20px; /* Adjust spacing */
+        }
+        .header-top .auth-buttons {
+            margin-left: auto;
+        }
+        
+        .header-top .auth-buttons .btn {
+            margin-left: 10px; /* Adjust spacing between buttons */
+        }
+        
+        .header-top .btn-primary {
+            background-color: #007bff; /* Blue color for Login button */
+            border-color: #007bff;
+        }
+        
+        .header-top .btn-secondary {
+            background-color: #6c757d; /* Gray color for Register button */
+            border-color: #6c757d;
+        }
+        
+</style>
+</head>
+
+<body id="home">
+    <header>
+        <!-- header left mobie -->
+        <div class="header-mobile d-md-none">
+            <div class="mobile hidden-md-up text-xs-center d-flex align-items-center justify-content-around">
+
+                <!-- menu left -->
+                <div id="mobile_mainmenu" class="item-mobile-top">
+                    <i class="fa fa-bars" aria-hidden="true"></i>
+                </div>
+
+                <!-- logo -->
+                <div class="mobile-logo">
+                   
+                        <img class="logo-mobile img-fluid" src="{% static 'img/home/logo-mobie.png '%}" alt="Prestashop_Furnitica">
+                    </a>
+                </div>
+
+                <!-- menu right -->
+                <div class="mobile-menutop" data-target="#mobile-pagemenu">
+                    <i class="zmdi zmdi-more"></i>
+                </div>
+            </div>                                  
+                                  
+                </div>
+            </div>
+        </div>
+         <!-- header desktop -->
+         <!-- header desktop -->
+<div class="header-top d-xs-none ">
+    <div class="container">
+        <div class="row" style="margin-left: -190px;">
+            <!-- logo -->
+            <div class="col-sm-4 col-md-2 d-flex align-items-center">
+                <div id="logo">
+                    <img class="img-fluid" src="{% static 'img/home/log10.png' %}" alt="logo">
+                    
+                </div>
+            </div>
+            <!-- login and register buttons -->
+            <div class="col-sm-8 col-md-10 d-flex align-items-center justify-content-end">
+                <div class="auth-buttons">
+                    <a href="{% url 'seller_login' %}" class="btn btn-primary">Login</a>
+                    <a href="{% url 'seller_profile' %}" class="btn btn-secondary">Start Selling</a>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</div>
+
+    </div>
+</div>
+
+</div>
+</header>
+
+<!-- main content -->
+<div class="main-content">
+    <div class="wrap-banner">
+        
+                                    </div>
+                                </li>
+                                
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- slide show -->
+        <div class="section banner">
+            <div class="tiva-slideshow-wrapper">
+                <div id="tiva-slideshow" class="nivoSlider">
+                    <a href="#">
+                        <img class="img-responsive" src="{% static 'img/home/c2.webp' %}" title="#caption1" alt="Slideshow image" style="width: 80%; max-height: 300px; object-fit: cover;">
+                    </a>
+                    <a href="#">
+                        <img class="img-responsive" src="{% static 'img/home/c4.jpg'%}" title="#caption2" alt="Slideshow image" style="width: 80%; max-height: 300px; object-fit: cover;">
+                    </a>
+                    <a href="#">
+                        <img class="img-responsive" src="{% static 'img/home/c5.jpg'%}" title="#caption3" alt="Slideshow image" style="width: 80%; max-height: 300px; object-fit: cover;">
+                    </a>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+
+  
+                  
+                   
+                    
+ <!-- footer -->
+ <footer class="footer-one">
+    <div class="inner-footer">
+        <div class="container">
+            <div class="footer-top col-lg-12 col-xs-12">
+                <div class="row">
+                    <div class="tiva-html col-lg-4 col-md-12 col-xs-12">
+                        <div class="block">
+                            <div class="block-content">
+                               
+                             
+                            </div>
+                        </div>
+                        <div class="block">
+                            <div class="block-content">
+                                <ul>
+                                    <li>
+                                        <a href="#">About Us</a>
+                                    </li>
+                                    <li>
+                                        <a href="#">Reasons to shop</a>
+                                    </li>
+                                    <li>
+                                        <a href="#">What our customers say</a>
+                                    </li>
+                                    <li>
+                                        <a href="#">Meet the team</a>
+                                    </li>
+                                    <li>
+                                        <a href="#">Contact our buyers</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="block">
+                            <div class="block-content">
+                                <p class="img-payment">
+                                    <img class="img-fluid" src="{% static 'img/home/payment-footer.png' %}" alt="img">
+                                </p>
+                                
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tiva-html col-lg-4 col-md-6">
+                        <div class="block m-top">
+                            <div class="title-block">
+                                Contact Us
+                            </div>
+                            <div class="block-content">
+                                <div class="contact-us">
+                                    <div class="title-content">
+                                        <i class="fa fa-home" aria-hidden="true"></i>
+                                        <span>Address :</span>
+                                    </div>
+                                    <div class="content-contact address-contact">
+                                        <p>123 Suspendis matti, Visaosang Building VST District NY Accums, North American</p>
+                                    </div>
+                                </div>
+                                <div class="contact-us">
+                                    <div class="title-content">
+                                        <i class="fa fa-envelope" aria-hidden="true"></i>
+                                        <span>Email :</span>
+                                    </div>
+                                    <div class="content-contact mail-contact">
+                                        <p>woodcrest751@gmail.com</p>
+                                    </div>
+                                </div>
+                                <div class="contact-us">
+                                    <div class="title-content">
+                                        <i class="fa fa-phone" aria-hidden="true"></i>
+                                        <span>contact :</span>
+                                    </div>
+                                    <div class="content-contact phone-contact">
+                                        <p>+91-95603-45128</p>
+                                    </div>
+                                </div>
+                                <div class="contact-us">
+                                    <div class="title-content">
+                                        <i class="fa fa-clock-o" aria-hidden="true"></i>
+                                        <span>Opening Hours :</span>
+                                    </div>
+                                    <div class="content-contact hours-contact">
+                                        <p>Monday - Sunday / 08.00AM - 19.00</p>
+                                        <span>(Except Holidays)</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                   
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="tiva-copyright">
+        <div class="container">
+            <div class="row">
+                
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+
+
+
+
+ <!-- Vendor JS -->
+ <script src="{% static 'libs/jquery/jquery.min.js'%}"></script>
+ <script src="{% static 'libs/popper/popper.min.js'%}"></script>
+ <script src="{% static 'libs/bootstrap/js/bootstrap.min.js'%}"></script>
+ <script src="{% static 'libs/nivo-slider/js/jquery.nivo.slider.js'%}"></script>
+ <script src="{% static 'libs/owl-carousel/owl.carousel.min.js'%}"></script>
+ <script src="{% static 'https://code.jquery.com/jquery-3.6.0.min.js'%}"></script>
+ <script src="{% static 'https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js'%}"></script>
+ <script src="{% static 'https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.min.js'%}"></script>
+ 
+
+ <!-- Template JS -->
+ <script src="{% static  'js/theme.js'%}"></script>
+</body>
+
+
+
+</html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seller Profile</title>
+</head>
+<body>
+    <h1>Seller Profile</h1>
+
+    <p>Name: {{ seller_profile.name }}</p>
+    <p>Email: {{ seller_profile.email }}</p>
+    <p>Phone: {{ seller_profile.phone }}</p>
+    <p>Address: {{ seller_profile.address }}</p>
+    <p>City: {{ seller_profile.city }}</p>
+    <p>Pincode: {{ seller_profile.pincode }}</p>
+    <p>Business Name: {{ seller_profile.business_name }}</p>
+    <p>GST Number: {{ seller_profile.gst_number }}</p>
+    <p>Account Holder Name: {{ seller_profile.account_holder_name }}</p>
+    <p>Account Number: {{ seller_profile.account_number }}</p>
+    <p>IFSC Code: {{ seller_profile.ifsc_code }}</p>
+
+    {% if seller_profile.business_pan_card %}
+        <p><a href="{{ seller_profile.business_pan_card.url }}">Business PAN Card</a></p>
+    {% endif %}
+    {% if seller_profile.cheque_passbook_photo %}
+        <p><a href="{{ seller_profile.cheque_passbook_photo.url }}">Cheque/Passbook Photo</a></p>
+    {% endif %}
+    {% if seller_profile.sign %}
+        <p><a href="{{ seller_profile.sign.url }}">Signature</a></p>
+    {% endif %}
+</body>
+</html>

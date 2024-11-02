@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Furniture Website</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .navbar {
+            background-color: salmon !important; /* Change navbar color */
+            padding-top: 50px;
+            padding-bottom: 100px;
+        }
+        #sidebar {
+            background-color: #f1ddcf;
+            height: calc(100vh - 56px); /* Adjust based on navbar height */
+            position: fixed;
+            top: 216px; /* Adjust based on navbar height */
+            bottom: 0;
+            left: 0;
+            padding: 40px;
+            width: 250px;
+        }
+        #sidebar .nav-link {
+            color: #000;
+            font-size: 16px;
+        }
+        #sidebar .nav-link.active {
+            font-weight: bold;
+        }
+        .navbar-brand img {
+            width: 80px;
+            height: auto;
+        }
+        main {
+            margin-left: 250px; /* Adjust based on sidebar width */
+        }
+        .content-section {
+            display: none;
+        }
+        .content-section.active {
+            display: block;
+        }
+        .breadcrumb {
+            background-color: transparent;
+            padding: 0;
+            margin-bottom: 0;
+        }
+        .breadcrumb-content ul li a {
+            text-decoration: none;
+            color: #EE82EE;
+        }
+        body, html {
+            height: 100%;
+            margin: 0;
+        }
+        #edit-form {
+            width: 100%;
+            margin-left: 20px;
+            max-width: 900px; /* Max width for the form */
+        }
+        .form-container {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Align items to the top */
+            padding-top: 60px; /* Space from the top */
+            position: fixed;
+            width: 100%;
+        }
+        #edit-form {
+            max-width: 600px; /* Adjust width as needed */
+            margin: 50px 0 0 20px; /* Center align the form */
+            border: 1px solid #ced4da; /* Light gray border */
+            border-radius: 5px; /* Rounded corners for the border */
+            padding: 20px; /* Padding inside the border */
+            background-color: #ffffff; /* White background color */
+        }
+        #edit-form .form-group {
+            margin-bottom: 1.5rem;
+        }
+        #edit-form .form-control {
+            border-radius: 4px; /* Rounded corners for input fields */
+        }
+        #edit-form .btn-primary {
+            width: 100%; /* Full width button */
+            padding: 10px; /* Padding inside the button */
+        }
+        .alert-box {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    {% load static %}
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="col-sm-4 col-md-2 d-flex align-items-center">
+            <div id="logo">
+                <img class="img-fluid" src="{% static 'img/home/log10.png' %}" alt="logo">
+            </div>
+        </div>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4" style="margin-right:650px;top:34px; ">
+                    <h3 class="title-3">My Account</h3>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="{% url 'index' %}">Home</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">My Account</li>
+                        </ol>
+                    </nav>
+                </main>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <div class="container-fluid">
+        <div class="row">
+            <nav id="sidebar" class="col-md-2 d-md-block bg-salmon sidebar">
+                <div class="sidebar-sticky">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.GET.section == 'dashboard' %}active{% endif %}" href="?section=dashboard">
+                                Account Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.GET.section == 'account-info' %}active{% endif %}" href="?section=account-info">
+                                Account Information
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.GET.section == 'payments' %}active{% endif %}" href="?section=payments">
+                                Payments
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.GET.section == 'logout' %}active{% endif %}" href="{% url 'logout' %}">
+                                Logout
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+            <!-- Content Block -->
+            <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-5">
+                <div class="content-section {% if request.GET.section == 'dashboard' or not request.GET.section %}active{% endif %}">
+                    <h1>Dashboard</h1>
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-6 mb-4">
+                                <div class="card">
+                                    <div class="card-header">Account Overview</div>
+                                    <div class="card-body">
+                                        <h5 class="card-title">Welcome, {{ user.username }}!</h5>
+                                        <p class="card-text">Here you can view your account details, recent orders, and more.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="container">
+                    <!-- Display session message if available -->
+                    <div id="alert-container">
+                        {% if last_profile_update %}
+                            <div class="alert alert-success alert-box">
+                                {{ last_profile_update }}
+                            </div>
+                        {% endif %}
+                        {% if messages %}
+                            {% for message in messages %}
+                                <div class="alert alert-{{ message.tags }} alert-box">
+                                    {{ message }}
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+
+                    <!-- Account Information Section -->
+                    <div class="content-section {% if request.GET.section == 'account-info' %}active{% endif %}">
+                        <div id="edit-form" class="container mt-4">
+                            <h2 class="mb-4 text-center">Update Information</h2>
+                            <form id="updateForm" method="post" action="{% url 'update_profile' %}" class="bg-light p-4 rounded shadow-sm">
+                                {% csrf_token %}
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="username">Username</label>
+                                            <input type="text" class="form-control" id="username" name="username" value="{{ user.username }}" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="email">Email address</label>
+                                            <input type="email" class="form-control" id="email" name="email" value="{{ user.email }}" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="mobile_number">Mobile Number</label>
+                                            <input type="text" class="form-control" id="mobile_number" name="mobile_number" value="{{ user.mobile_number }}" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="pincode">Pincode</label>
+                                            <input type="text" class="form-control" id="pincode" name="pincode" value="{{ user.pincode }}" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="address">Address</label>
+                                            <textarea class="form-control" id="address" name="address" rows="3" required>{{ user.address }}</textarea>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary mt-4">Update Profile</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.11/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

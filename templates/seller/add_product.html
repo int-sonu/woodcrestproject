@@ -1,0 +1,264 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'css/admin_styles.css' %}">
+    <!-- Feather Icons -->
+    <link rel="stylesheet" href="https://unpkg.com/feather-icons/dist/feather.css">
+    <style>
+        .feather {
+            width: 16px;
+            height: 16px;
+        }
+        #seats-container .seat-group h3 {
+            margin-left: 0;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        
+        #seats-container .form-group {
+            margin-left: 0;
+            padding-left: 0;
+        }
+    </style>
+</head>
+<body>
+   <nav class="navbar navbar-dark sticky-top" style="background-color: #f1ddcf;">
+    <a class="navbar-brand col-md-3 col-lg-2 mr-0 d-flex align-items-center" href="#">
+        <img src="{% static 'img/home/log10.png' %}" width="180" height="50" class="d-inline-block align-middle" alt="" style="background-color: #f1ddcf;margin-top:50px;position:fixed;">
+    </a>
+    <div class="navbar-heading text-center flex-grow-1" style="text-align: center; flex-grow: 1;">
+        <h1 style="font-size: 2rem; color: #333; margin: 0;">Seller Dashboard</h1>
+    </div>
+    <ul class="navbar-nav px-3 ml-auto" style="background-color: #f1ddcf;margin-top:15px;margin-left:20px;">
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color: black;">
+                Welcome, {{ user.username }}!
+            </a>
+            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
+                <a class="dropdown-item" href=""><i data-feather="user"></i> Profile</a>
+                <a class="dropdown-item" href=""><i data-feather="key"></i> Change Password</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="{% url 'logout' %}"><i data-feather="log-out"></i> Logout</a>
+            </div>
+        </li>
+    </ul>
+</nav>
+
+    
+    <div class="container-fluid">
+        <div class="row">
+            <nav class="col-md-2 d-none d-md-block bg-salmon sidebar">
+                <div class="sidebar-sticky">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link active mt-3" href="{% url 'seller_dashboard' %}">
+                                <i data-feather="home"></i>
+                                Dashboard <span class="sr-only">(current)</span>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link mt-3" href="{% url 'seller_view_categories' %}">
+                                <i data-feather="layers"></i>
+                                Categories
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link mt-3" href="{% url 'seller_view_subcategories' %}">
+                                <i data-feather="shopping-cart"></i>
+                                SubCategories
+                            </a>
+                        </li>
+                        
+                        <li class="nav-item">
+                            <a class="nav-link mt-3" href="{% url 'view_product' %}">
+                                <i data-feather="package"></i>
+                                Products
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link mt-3" href="{% url 'seller_orders' %}">
+                                <i data-feather="package"></i>
+                                Orders
+                            </a>
+                        </li>
+
+                        
+                        <li class="nav-item">
+                            <a class="nav-link mt-3" href="{% url 'seller_page' %}">
+                                <i data-feather="shopping-cart"></i>
+                                Custom Details
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link mt-3" href="{% url 'seller_comments' %}">
+                                <i data-feather="shopping-cart"></i>
+                                Feedback
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+            <div class="container mt-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 style="font-size: 30px; font-weight: bold; text-align: center;">Add Product</h2>
+                    </div>
+                    <div class="card-body">
+                        <form id="add-product-form" method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="product_name">Product Name</label>
+                                        <input type="text" class="form-control {% if errors.product_name %}is-invalid{% endif %}" id="product_name" name="product_name" required>
+                                        {% if errors.product_name %}
+                                            <div class="invalid-feedback">{{ errors.product_name }}</div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="category">Category</label>
+                                        <select name="category" id="category" class="form-control" required>
+                                            {% for category in categories %}
+                                                <option value="{{ category.id }}">{{ category.name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="subcategory">Subcategory</label>
+                                        <select id="subcategory" name="subcategory" class="form-control" required>
+                                            <option value="">Select a subcategory</option>
+                                            {% for subcategory in subcategories %}
+                                                <option value="{{ subcategory.id }}" data-category="{{ subcategory.category.id }}">{{ subcategory.sub_name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="wood">Wood</label>
+                                        <input type="text" class="form-control {% if errors.wood %}is-invalid{% endif %}" id="wood" name="wood" required>
+                                        {% if errors.wood %}
+                                            <div class="invalid-feedback">{{ errors.wood }}</div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="price">Price</label>
+                                        <input type="price" class="form-control {% if errors.price %}is-invalid{% endif %}" id="price" name="price" required min="0">
+                                        {% if errors.price %}
+                                            <div class="invalid-feedback">{{ errors.price }}</div>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="color">Color</label>
+                                        <input type="text" class="form-control {% if errors.color %}is-invalid{% endif %}" id="color" name="color" required>
+                                        {% if errors.color %}
+                                            <div class="invalid-feedback">{{ errors.color }}</div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="images">Images</label>
+                                        <input type="file" class="form-control {% if errors.images %}is-invalid{% endif %}" id="images" name="images" multiple required accept=".jpg,.jpeg,.png">
+                                        {% if errors.images %}
+                                            <div class="invalid-feedback">{{ errors.images }}</div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="stock">Stock</label>
+                                        <input type="number" class="form-control {% if errors.stock %}is-invalid{% endif %}" id="stock" name="stock" required min="0">
+                                        {% if errors.stock %}
+                                            <div class="invalid-feedback">{{ errors.stock }}</div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="description">Description</label>
+                                        <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="additional_info">Additional Info</label>
+                                        <textarea class="form-control" id="additional_info" name="additional_info" rows="3"></textarea>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div id="seats-container">
+                                                <div class="seat-group">
+                                                    <h3 style="margin-left: 0;">Seat Details:</h3>
+                                                    <div class="form-group">
+                                                        <label for="seat_type">Seat Type:</label>
+                                                        <input type="text" class="form-control" id="seat_type" name="seat_type" required>
+                                                    </div>
+                                    
+                                                    <div class="form-group">
+                                                        <label for="seat_price">Seat Price:</label>
+                                                        <input type="text" class="form-control" id="seat_price" name="seat_price">
+                                                    </div>
+                                                    <a href="#" class="remove-seat-btn" onclick="removeSeat(this)">Remove Seat</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>                                    
+                            
+                                    <a href="#" class="add-seat-btn" onclick="addSeat()">Add Another Seat</a>
+                                    <button type="submit" class="submit-btn">Add Product</button>
+                                </form>
+                            </div>
+                            
+                          
+                            
+                           
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+              
+            </div>
+        </div>
+    </div>
+    <script>
+        function addSeat() {
+            const seatGroup = document.createElement('div');
+            seatGroup.classList.add('seat-group');
+            seatGroup.innerHTML = `
+                <h3>Seat Details:</h3>
+                <div class="form-group">
+                    <label for="seat_type">Seat Type:</label>
+                    <input type="text" name="seat_type" required>
+                </div>
+                <div class="form-group">
+                    <label for="seat_price">Seat Price:</label>
+                    <input type="text" name="seat_price">
+                </div>
+                <a href="#" class="remove-seat-btn" onclick="removeSeat(this)">Remove Seat</a>
+            `;
+            document.getElementById('seats-container').appendChild(seatGroup);
+        }
+    
+        function removeSeat(element) {
+            element.parentElement.remove();
+        }
+    </script>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- Feather Icons JS -->
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script>
+        feather.replace()
+    </script>
+</body>
+</html>

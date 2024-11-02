@@ -1,0 +1,72 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Delete Product</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f8f9fa;
+        margin: 0;
+        padding: 20px;
+    }
+
+    .container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+        background: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+        font-size: 24px;
+        margin-bottom: 20px;
+    }
+
+    form {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    button {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        background-color: #dc3545;
+        color: #ffffff;
+        cursor: pointer;
+    }
+
+    button:hover {
+        background-color: #c82333;
+    }
+
+    a {
+        padding: 10px 20px;
+        border: 1px solid #007bff;
+        border-radius: 4px;
+        color: #007bff;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    a:hover {
+        background-color: #007bff;
+        color: #ffffff;
+    }
+</style>
+</head>
+<body>
+    <h1>Delete Product</h1>
+    <p>Are you sure you want to delete the product "{{ product.product_name }}"?</p>
+    
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit">Delete</button>
+        <a href="{% url 'view_product' %}">Cancel</a>
+    </form>
+</body>
+</html>
