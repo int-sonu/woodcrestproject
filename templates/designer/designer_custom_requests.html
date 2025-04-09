@@ -1,0 +1,30 @@
+{% block content %}
+<h2>Custom Requests</h2>
+
+<table border="1">
+    <tr>
+        <th>User</th>
+        <th>City</th>
+        <th>Custom Requirements</th>
+        <th>Image</th>
+    </tr>
+    {% for request in custom_requests %}
+    <tr>
+        <td>{{ request.user.username }}</td>
+        <td>{{ request.city }}</td>
+        <td>{{ request.custom_requirements }}</td>
+        <td>
+            {% if request.image %}
+            <img src="{{ request.image.url }}" alt="Custom Request Image" width="100">
+            {% else %}
+            No Image
+            {% endif %}
+        </td>
+    </tr>
+    {% empty %}
+    <tr>
+        <td colspan="4">No custom requests available.</td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}

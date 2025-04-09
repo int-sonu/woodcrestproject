@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Payment Details</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        .info-section {
+            margin-bottom: 30px;
+        }
+        .info-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .info-label {
+            width: 200px;
+            font-weight: bold;
+        }
+        .info-value {
+            flex: 1;
+        }
+        .price-input {
+            margin-left: 20px;
+        }
+        input[type="text"], input[type="text"] {
+            padding: 5px;
+            width: 120px;
+            text-align: right;
+        }
+        button {
+            margin-top: 20px;
+            padding: 8px 15px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        #total-price {
+            font-size: 18px;
+            font-weight: bold;
+            color: #d9534f;
+        }
+    </style>
+    <script>
+        function calculateTotal() {
+            let total = 0;
+            let priceInputs = document.querySelectorAll(".price-input input");
+
+            priceInputs.forEach(input => {
+                let value = parseFloat(input.value) || 0;
+                total += value;
+            });
+
+            document.getElementById("total-price").textContent = "₹ " + total.toFixed(2);
+        }
+        function calculateTotal() {
+            let total = 0;
+            document.querySelectorAll(".price-input input").forEach(input => {
+                total += parseFloat(input.value) || 0;
+            });
+            document.getElementById("total_price").innerText = total.toFixed(2);
+        }
+    
+        document.querySelectorAll(".price-input input").forEach(input => {
+            input.addEventListener("input", calculateTotal);
+        });
+    </script>
+</head>
+<body>
+    <h2>Payment Details</h2>
+
+    <form method="post" action="{% url 'payment_details' request_obj.id %}">
+        {% csrf_token %}
+
+        <div class="info-section">
+
+            <div class="info-row">
+                <div class="info-label">Customer Name:</div>
+                <div class="info-value">{{ request_obj.full_name }}</div>
+            </div>
+
+            <div class="info-row">
+                <div class="info-label">Email:</div>
+                <div class="info-value">{{ request_obj.email }}</div>
+            </div>
+
+            <div class="info-row">
+                <div class="info-label">Phone:</div>
+                <div class="info-value">{{ request_obj.phone }}</div>
+            </div>
+
+            <div class="info-row">
+                <div class="info-label">Furniture Type:</div>
+                <div class="info-value">{{ request_obj.get_furniture_type_display }}</div>
+                <div class="price-input">
+                    ₹ <input type="text" name="price_furniture" step="0.01" required oninput="calculateTotal()">
+                </div>
+            </div>
+
+            <div class="info-row">
+                <div class="info-label">Material:</div>
+                <div class="info-value">{{ request_obj.material.name }}</div>
+                <div class="price-input">
+                    ₹ <input type="text" name="price_material" step="0.01" required oninput="calculateTotal()">
+                </div>
+            </div>
+
+            <div class="info-row">
+                <div class="info-label">Wood Type:</div>
+                <div class="info-value">{{ request_obj.wood_type.name }}</div>
+                <div class="price-input">
+                    ₹ <input type="text" name="price_wood" step="0.01" required oninput="calculateTotal()">
+                </div>
+            </div>
+
+            <div class="info-row">
+                <div class="info-label">Color:</div>
+                <div class="info-value">{{ request_obj.color }}</div>
+                <div class="price-input">
+                    ₹ <input type="text" name="price_color" step="0.01" required oninput="calculateTotal()">
+                </div>
+            </div>
+
+            <div class="info-row">
+                <div class="info-label">Storage Options:</div>
+                <div class="info-value">{{ request_obj.storage_options|default:"None" }}</div>
+                <div class="price-input">
+                    ₹ <input type="text" name="price_storage" step="0.01" oninput="calculateTotal()">
+                </div>
+            </div>
+
+            <div class="info-row">
+                <div class="info-label">Special Features:</div>
+                <div class="info-value">{{ request_obj.special_features|default:"None" }}</div>
+                <div class="price-input">
+                    ₹ <input type="text" name="price_features" step="0.01" oninput="calculateTotal()">
+                </div>
+            </div>
+
+            <div class="info-row">
+                <div class="info-label">Finish:</div>
+                <div class="info-value">{{ request_obj.finish|default:"None" }}</div>
+                <div class="price-input">
+                    ₹ <input type="text" name="price_finish" step="0.01" oninput="calculateTotal()">
+                </div>
+            </div>
+
+            <div class="info-row">
+                <div class="info-label">Urgent Request:</div>
+                <div class="info-value">
+                    <input type="checkbox" name="urgent_request" {% if request_obj.urgent_request %}checked{% endif %}>
+                </div>
+                <div class="price-input">
+                    ₹ <input type="text" name="price_urgent" step="0.01" oninput="calculateTotal()">
+                </div>
+            </div>
+
+            <div class="info-row">
+                <div class="info-label">Total Price:</div>
+                <div class="info-value">₹ <span id="total_price">{{ payment.total_price }}</span></div>
+            </div>
+            
+        </div>
+
+        <button type="submit">Save Prices</button>
+    </form>
+</body>
+</html>

@@ -1,0 +1,610 @@
+{% load static %}
+<!doctype html>
+<html ⚡>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1">
+  <title>Customizer Dashboard</title>
+  <link rel="canonical" href="self.html">
+  <script async src="https://cdn.ampproject.org/v0.js"></script>
+  <style amp-custom>
+    body {
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f6f9;
+      color: #333;
+    }
+    .header {
+      background-color: #007bff;
+      color: white;
+      height: 80px;
+      padding: 20px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .logo {
+      height: 50px;
+    }
+    .search-bar input {
+      width: 100%;
+      padding: 10px;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+    }
+    .sidebar {
+      background-color: #343a40;
+      height: 100vh;
+      padding: 20px;
+      position: fixed;
+      top: 80px;
+      width: 250px;
+      color: white;
+    }
+    .sidebar a, .dropdown {
+      display: block;
+      color: #f8f9fa;
+      text-decoration: none;
+      padding: 12px 15px;
+      border-radius: 6px;
+      transition: background 0.3s;
+      margin-bottom: 10px; /* Adds space between links */
+    }
+    .sidebar a:hover {
+      background-color: #495057;
+    }
+    .dropdown {
+      position: relative;
+      display: block;
+    }
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      left: 0;
+      top: 100%;
+      background-color: white;
+      width: 100%;
+      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+      z-index: 10;
+    }
+    .dropdown-content a {
+      display: block;
+      padding: 10px;
+      color: black;
+      text-decoration: none;
+    }
+    .dropdown-content a:hover {
+      background-color: #ddd;
+    }
+    .dropdown:hover .dropdown-content {
+      display: block;
+    }
+    .content {
+      margin-left: 270px;
+      margin-top: 100px;
+      padding: 30px;
+    }
+
+    /* Form Styling */
+    .form-container {
+      background: white;
+      max-width: 500px;
+      margin: 20px auto;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      text-align: left;
+    }
+    .form-container h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #333;
+    }
+    .form-container label {
+      display: block;
+      font-weight: bold;
+      margin: 10px 0 5px;
+    }
+    .form-container input,
+    .form-container textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 16px;
+      margin-bottom: 10px;
+    }
+    .form-container input:focus,
+    .form-container textarea:focus {
+      border-color: #007bff;
+      outline: none;
+    }
+    .form-container button {
+      width: 100%;
+      padding: 12px;
+      background-color: #007bff;
+      border: none;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .form-container button:hover {
+      background-color: #0056b3;
+    }
+    .form-container p {
+      text-align: center;
+      font-weight: bold;
+    }
+    /* General Styles */
+body {
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f4f6f9;
+  color: #333;
+}
+
+/* Header */
+.header {
+  background-color: #007bff;
+  color: white;
+  height: 80px;
+  padding: 20px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.logo {
+  height: 50px;
+}
+.search-bar input {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+}
+
+/* Sidebar */
+.sidebar {
+  background-color: #343a40;
+  height: 100vh;
+  padding: 20px;
+  position: fixed;
+  top: 80px;
+  width: 250px;
+  color: white;
+}
+.sidebar a, .dropdown {
+  display: block;
+  color: #f8f9fa;
+  text-decoration: none;
+  padding: 12px 15px;
+  border-radius: 6px;
+  transition: background 0.3s;
+  margin-bottom: 10px;
+}
+.sidebar a:hover, .dropdown:hover {
+  background-color: #495057;
+}
+.dropdown-content {
+  display: none;
+  position: absolute;
+  left: 0;
+  top: 100%;
+  background-color: white;
+  width: 100%;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: 10;
+}
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+/* General Styles */
+body {
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f6f9;
+    color: #333;
+}
+
+/* Header */
+.header {
+    background-color: #007bff;
+    color: white;
+    height: 80px;
+    padding: 20px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    height: 50px;
+}
+
+.search-bar input {
+    width: 250px;
+    padding: 10px;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    outline: none;
+}
+
+.profile {
+    font-weight: bold;
+}
+
+/* Sidebar */
+.sidebar {
+    background-color: #343a40;
+    height: 100vh;
+    width: 250px;
+    position: fixed;
+    top: 80px;
+    left: 0;
+    padding-top: 20px;
+    color: white;
+}
+
+.sidebar a,
+.sidebar .dropdown {
+    display: block;
+    color: white;
+    text-decoration: none;
+    padding: 12px 20px;
+    border-radius: 6px;
+    margin-bottom: 8px;
+    transition: background 0.3s;
+}
+
+.sidebar a:hover,
+.sidebar .dropdown:hover {
+    background-color: #495057;
+}
+
+.dropdown-content {
+    display: none;
+    background-color: white;
+    width: 100%;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 6px;
+}
+
+.dropdown-content a {
+    color: black;
+    padding: 10px 20px;
+    display: block;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+/* Content */
+.content {
+    margin-left: 270px;
+    margin-top: 100px;
+    padding: 30px;
+}
+
+/* Table */
+table {
+    width: 10%;
+    border-collapse: collapse;
+    margin-top: 80px;
+    background: white;
+    border-radius: 8px;
+    margin-right:10px;
+    margin-left:295px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+th, td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+th {
+    background-color: #007bff;
+    color: white;
+}
+
+tr:hover {
+    background-color: #f1f1f1;
+}
+
+/* Select Dropdown */
+select {
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+/* Buttons */
+button {
+    padding: 10px 15px;
+    font-size: 14px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.edit-btn {
+    background-color: #ffc107;
+    color: black;
+}
+
+.delete-btn {
+    background-color: #dc3545;
+    color: white;
+}
+
+.payment-btn {
+    background-color: #28a745;
+    color: white;
+}
+
+.edit-btn:hover {
+    background-color: #e0a800;
+}
+
+.delete-btn:hover {
+    background-color: #c82333;
+}
+
+.payment-btn:hover {
+    background-color: #218838;
+}
+
+/* Form Styling */
+.form-container {
+    background: white;
+    max-width: 500px;
+    margin: 20px auto;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.form-container h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.form-container label {
+    display: block;
+    font-weight: bold;
+    margin: 10px 0 5px;
+}
+
+.form-container input,
+.form-container textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+.form-container button {
+    width: 100%;
+    padding: 12px;
+    background-color: #007bff;
+    border: none;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.form-container button:hover {
+    background-color: #0056b3;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 200px;
+    }
+
+    .content {
+        margin-left: 220px;
+    }
+
+    .search-bar input {
+        width: 150px;
+    }
+}
+
+@media (max-width: 576px) {
+    .sidebar {
+        width: 180px;
+    }
+
+    .content {
+        margin-left: 190px;
+    }
+
+    .header {
+        padding: 10px;
+    }
+
+    .search-bar input {
+        width: 120px;
+    }
+
+    button {
+        padding: 8px 12px;
+    }
+}
+
+  </style>
+
+    <script>
+        function updateStatus(requestId) {
+            var status = document.getElementById("status_" + requestId).value;
+
+            fetch(`/update_status/${requestId}/`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": getCSRFToken()  
+                },
+                body: JSON.stringify({ status: status })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert("Status updated successfully!");
+                } else {
+                    alert("Failed to update status.");
+                }
+            })
+            .catch(error => console.error("Error:", error));
+        }
+
+        function deleteRequest(requestId) {
+            if (confirm("Are you sure you want to delete this request?")) {
+                fetch(`/delete_request/${requestId}/`, {
+                    method: "DELETE",
+                    headers: {
+                        "X-CSRFToken": getCSRFToken()
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert("Request deleted successfully!");
+                        location.reload(); // Refresh page after deletion
+                    } else {
+                        alert("Failed to delete request.");
+                    }
+                })
+                .catch(error => console.error("Error:", error));
+            }
+        }
+
+        function getCSRFToken() {
+            return document.querySelector('[name=csrfmiddlewaretoken]').value;
+        }
+    </script>
+    
+</head>
+<body>
+  <div class="header">
+    <img src="{% static 'img/home/log10.png' %}" alt="Logo" class="logo">
+    <div class="search-bar">
+      <input type="text" placeholder="Search...">
+    </div>
+    <div class="profile">
+      👤 Hello, {{ user.username }}!
+    </div>
+  </div>
+
+  <div class="sidebar">
+    <h4>🎨 Customizer</h4>
+    <a href="{% url 'designer_dashboard' %}" class="active">🏠 Dashboard</a>
+
+    <div class="dropdown">
+      🛠️ Materials ▼
+      <div class="dropdown-content">
+        <a href="{% url 'add_material' %}">➕ Add Material</a>
+        <a href="{% url 'view_materials' %}">📋 View Materials</a>
+      </div>
+    </div>
+
+    <a href="{% url 'customization_requests_list' %}">📐 Custom Orders</a>
+    <a href="">✅ Completed Designs</a>
+    <a href="">⏳ Pending Tasks</a>
+    <a href="{% url 'customization_requests' %}">📝 Customization Requests</a>
+    <a href="">🚪 Logout</a>
+  </div>
+    <h2>Customization Requests</h2>
+
+    {% csrf_token %}  
+
+    <table>
+        <thead>
+            <tr>
+                <th>Customer Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Furniture Type</th>
+                <th>Material</th>
+                <th>Wood Type</th>
+                <th>Color</th>
+                <th>Status</th>
+                <th>Requested Date</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for request in requests %}
+            <tr>
+                <td>{{ request.full_name }}</td>
+                <td>{{ request.email }}</td>
+                <td>{{ request.phone }}</td>
+                <td>{{ request.get_furniture_type_display }}</td>
+                <td>{{ request.material.name }}</td>
+                <td>{{ request.wood_type.name }}</td>
+                <td>{{ request.color }}</td>
+                <td>
+                    <select id="status_{{ request.id }}" onchange="updateStatus({{ request.id }})">
+                        <option value="pending" {% if request.status == "pending" %}selected{% endif %}>Pending</option>
+                        <option value="accepted" {% if request.status == "accepted" %}selected{% endif %}>Accepted</option>
+                        <option value="in_progress" {% if request.status == "in_progress" %}selected{% endif %}>In Progress</option>
+                        <option value="completed" {% if request.status == "completed" %}selected{% endif %}>Completed</option>
+                        <option value="rejected" {% if request.status == "rejected" %}selected{% endif %}>Rejected</option>
+                    </select>
+                </td>
+                <td>{{ request.created_at|date:"Y-m-d" }}</td>
+                <td>
+                    <a href="/edit_request/{{ request.id }}/">
+                        <button class="edit-btn">Edit</button>
+                    </a>
+                    <a href="/payment_details/{{ request.id }}/">
+                        <button style="background-color: #28a745;" class="edit-btn">Payment</button>
+                    </a>
+                    <button class="delete-btn" onclick="deleteRequest({{ request.id }})">Delete</button>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="10">No customization requests found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
