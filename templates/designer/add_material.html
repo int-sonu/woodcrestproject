@@ -1,0 +1,236 @@
+{% load static %}
+<!doctype html>
+<html ⚡>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1">
+  <title>Customizer Dashboard</title>
+  <link rel="canonical" href="self.html">
+  <script async src="https://cdn.ampproject.org/v0.js"></script>
+  <style amp-custom>
+    body {
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f6f9;
+      color: #333;
+    }
+    .header {
+      background-color: #007bff;
+      color: white;
+      height: 80px;
+      padding: 20px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .logo {
+      height: 50px;
+    }
+    .search-bar input {
+      width: 100%;
+      padding: 10px;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+    }
+    .sidebar {
+      background-color: #343a40;
+      height: 100vh;
+      padding: 20px;
+      position: fixed;
+      top: 80px;
+      width: 250px;
+      color: white;
+    }
+    .sidebar a, .dropdown {
+      display: block;
+      color: #f8f9fa;
+      text-decoration: none;
+      padding: 12px 15px;
+      border-radius: 6px;
+      transition: background 0.3s;
+      margin-bottom: 10px; /* Adds space between links */
+    }
+    .sidebar a:hover {
+      background-color: #495057;
+    }
+    .dropdown {
+      position: relative;
+      display: block;
+    }
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      left: 0;
+      top: 100%;
+      background-color: white;
+      width: 100%;
+      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+      z-index: 10;
+    }
+    .dropdown-content a {
+      display: block;
+      padding: 10px;
+      color: black;
+      text-decoration: none;
+    }
+    .dropdown-content a:hover {
+      background-color: #ddd;
+    }
+    .dropdown:hover .dropdown-content {
+      display: block;
+    }
+    .content {
+      margin-left: 270px;
+      margin-top: 100px;
+      padding: 30px;
+    }
+
+    /* Form Styling */
+    .form-container {
+      background: white;
+      max-width: 500px;
+      margin: 20px auto;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      text-align: left;
+    }
+    .form-container h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #333;
+    }
+    .form-container label {
+      display: block;
+      font-weight: bold;
+      margin: 10px 0 5px;
+    }
+    .form-container input,
+    .form-container textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 16px;
+      margin-bottom: 10px;
+    }
+    .form-container input:focus,
+    .form-container textarea:focus {
+      border-color: #007bff;
+      outline: none;
+    }
+    .form-container button {
+      width: 100%;
+      padding: 12px;
+      background-color: #007bff;
+      border: none;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .form-container button:hover {
+      background-color: #0056b3;
+    }
+    .form-container p {
+      text-align: center;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <img src="{% static 'img/home/log10.png' %}" alt="Logo" class="logo">
+    <div class="search-bar">
+      <input type="text" placeholder="Search...">
+    </div>
+    <div class="profile">
+      👤 Hello, {{ user.username }}!
+    </div>
+  </div>
+
+  <div class="sidebar">
+    <h4>🎨 Customizer</h4>
+    <a href="{% url 'designer_dashboard' %}" class="active">🏠 Dashboard</a>
+
+    <div class="dropdown">
+      🛠️ Materials ▼
+      <div class="dropdown-content">
+        <a href="{% url 'add_material' %}">➕ Add Material</a>
+        <a href="{% url 'view_materials' %}">📋 View Materials</a>
+      </div>
+    </div>
+
+    <a href="{% url 'customization_requests_list' %}">📐 Custom Orders</a>
+    <a href="">✅ Completed Designs</a>
+    <a href="">⏳ Pending Tasks</a>
+    <a href="{% url 'customization_requests' %}">📝 Customization Requests</a>
+    <a href="">🚪 Logout</a>
+  </div>
+
+  <div class="content">
+    {% block content %}
+    
+    <!-- Add New Material Section -->
+    <div class="form-container">
+      <h2>Add New Material</h2>
+
+      {% if messages %}
+        {% for message in messages %}
+          <p style="color: {% if message.tags == 'success' %}green{% else %}red{% endif %};">
+            {{ message }}
+          </p>
+        {% endfor %}
+      {% endif %}
+
+      <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <label for="name">Material Name:</label>
+        <input type="text" id="name" name="name" required>
+
+        <label for="description">Description:</label>
+        <textarea id="description" name="description"></textarea>
+
+        <label for="image">Upload Image:</label>
+        <input type="file" id="image" name="image">
+
+        <button type="submit">Add Material</button>
+      </form>
+    </div>
+
+    <!-- Add Wood Type Section -->
+    <div class="form-container">
+      <h2>Add New Wood Type</h2>
+
+      <form method="post" enctype="multipart/form-data" action="{% url 'add_woodtype' %}">
+        {% csrf_token %}
+
+        <label for="name">Wood Type:</label>
+        <input type="text" id="name" name="name" required>
+
+        <label for="wood_description">Description:</label>
+        <textarea id="wood_description" name="wood_description"></textarea>
+
+        <label for="wood_price">Price (₹):</label>
+        <input type="number" id="wood_price" name="wood_price" step="0.01" required>
+
+        <label for="wood_image">Upload Image:</label>
+        <input type="file" id="wood_image" name="wood_image">
+
+        <button type="submit">Add Wood Type</button>
+      </form>
+    </div>
+
+    {% endblock %}
+  </div>
+</body>
+</html>
