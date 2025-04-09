@@ -2,32 +2,12 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login as auth_login
 from django.contrib import messages
 from django.views.decorators.cache import cache_control
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.hashers import make_password  # Import make_password
-from .models import User  # Make sure to import your custom User model
-from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login as auth_login
-from django.contrib import messages
-from django.views.decorators.cache import cache_control
-from .models import User
-
-from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login as auth_login
-from django.contrib import messages
-from django.views.decorators.cache import cache_control
-from .models import User
-from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login as auth_login
-from django.views.decorators.cache import cache_control
-from django.conf import settings
-from .models import Product, Image, Category, SubCategory
-from django.db import IntegrityError
-
+from store.models import User, Orders, DeliveryAgent, DeliveryAssignment
 
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def login_view(request):
     if request.user.is_authenticated:
-        return redirect('index')  # Redirect to home or dashboard if already logged in
+        return redirect('index')  # Redirect to home if already logged in
 
     if request.method == 'POST':
         email = request.POST.get('email')
@@ -39,28 +19,31 @@ def login_view(request):
         if user is not None:
             if user.status == 'blocked':
                 return redirect('blocked')  # Redirect to account blocked page
-            
+
             # Log the user in
             auth_login(request, user)
-            
+
+            # If the user is a delivery agent, check profile completion
+            if user.is_delivery_agent():
+                if not hasattr(user, 'deliveryagent') or not user.deliveryagent.profile_completed:
+                    return redirect('complete_profile')  # Only delivery agents must complete profile
+
             # Redirect based on user role
             if user.is_admin():
-                return redirect('admin_dashboard')  # Redirect to admin dashboard
+                return redirect('admin_dashboard')
             elif user.is_seller():
-                return redirect('seller_dashboard')  # Redirect to seller dashboard
+                return redirect('seller_dashboard')
+            elif user.is_delivery_agent():
+                return redirect('delivery_dashboard')
+            elif user.is_designer():
+                return redirect('designer_dashboard')
             else:
                 return redirect('index')  # Redirect to home for regular users
         else:
-            return redirect('login')  # Redirect back to the login page if authentication fails
+            messages.error(request, 'Invalid email or password.')
+            return redirect('login')
 
-    return render(request, 'register.html')  # Adjust template name if necessary
-
-from django.shortcuts import render, redirect
-from django.contrib import messages
-from store.models import User  # Import your custom User model
-from django.db import IntegrityError
-from django.contrib.auth import authenticate, login as auth_login
-from django.views.decorators.cache import cache_control
+    return render(request, 'register.html')
 
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def register(request):
@@ -71,7 +54,7 @@ def register(request):
         pincode = request.POST.get('pincode')
         address = request.POST.get('address')
         password = request.POST.get('password')
-        role = request.POST.get('role', 'user')
+        role = request.POST.get('role', 'user')  # Default to 'user' if no role is selected
 
         if User.objects.filter(email=email).exists():
             messages.error(request, 'Email already exists.')
@@ -84,19 +67,38 @@ def register(request):
                     pincode=pincode,
                     address=address,
                     role=role,
-                    is_approved=False if role == 'seller' else True
+                    is_approved=False if role in ['seller', 'delivery_agent', 'designer'] else True
                 )
                 user.set_password(password)  # Hash the password
                 user.save()
+                
                 if role == 'seller':
                     messages.success(request, 'Registration successful. Your account is pending approval.')
+                elif role == 'delivery_agent':
+                    messages.success(request, 'Registration successful. Your account is pending approval as a delivery agent.')
+                elif role == 'designer':
+                    messages.success(request, 'Registration successful. Your account is pending approval as a designer.')
                 else:
                     messages.success(request, 'Registration successful.')
+                    
                 return redirect('login')
             except IntegrityError:
                 messages.error(request, 'An error occurred while creating the user.')
 
     return render(request, 'register.html')
+
+
+
+
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
+
+@login_required
+def designer_dashboard(request):
+    return render(request, 'designer/designer_dashboard.html')  # Ensure this template exists
+
+
+
 
 from django.shortcuts import render
 
@@ -114,7 +116,27 @@ def admin_dashboard(request):
     if not request.user.is_admin:
         messages.error(request, 'You are not authorized to access this page.')
         return redirect('index')  # Redirect to home if not an admin
-    return render(request, 'admin/admin_dashboard.html')  # Render admin dashboard template
+
+    # Calculate totals
+    total_users = User.objects.filter(is_superuser=False).count()  # Count regular users
+    total_categories = Category.objects.count()  # Count total categories
+    total_subcategories = SubCategory.objects.count()  # Count total subcategories
+    total_products = Product.objects.count()  # Count total products
+    total_orders = Orders.objects.count()  # Assuming you have an Orders model
+    total_customizations = 0  # Replace with actual logic if you have a Customization model
+    total_feedback = 0  # Replace with actual logic if you have a Feedback model
+
+    context = {
+        'total_users': total_users,
+        'total_categories': total_categories,
+        'total_subcategories': total_subcategories,
+        'total_products': total_products,
+        'total_orders': total_orders,
+        'total_customizations': total_customizations,
+        'total_feedback': total_feedback,
+    }
+
+    return render(request, 'admin/admin_dashboard.html', context)  # Render admin dashboard template
 
 @login_required
 def seller_dashboard(request):
@@ -122,6 +144,94 @@ def seller_dashboard(request):
         messages.error(request, 'You are not authorized to access this page.')
         return redirect('index')  # Redirect to home if not a seller
     return render(request, 'seller/seller_dashboard.html')  # Render seller dashboard template
+
+
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+
+@login_required
+def delivery_dashboard(request):
+    return render(request, "delivery_agent/delivery_dashboard.html")
+
+
+def complete_profile_view(request):
+    user = request.user
+
+    try:
+        delivery_agent = DeliveryAgent.objects.get(user=user)
+        
+        # Check if all required fields are filled and profile is complete
+        if (
+            delivery_agent.full_name and
+            delivery_agent.email and
+            delivery_agent.phone_number and
+            delivery_agent.vehicle_type and
+            delivery_agent.vehicle_id and
+            delivery_agent.delivery_area and
+            delivery_agent.address and
+            delivery_agent.gender and
+            delivery_agent.emergency_contact and
+            delivery_agent.bank_details
+        ):
+            if delivery_agent.is_approved:
+                messages.info(request, "Your profile is already complete and approved.")
+                return redirect('delivery_dashboard')  # Redirect to dashboard if approved
+            else:
+                messages.info(request, "Your profile is complete, awaiting approval.")
+                return redirect('login')  # Redirect to login if awaiting approval
+    
+    except DeliveryAgent.DoesNotExist:
+        delivery_agent = None  
+
+    if request.method == 'POST':
+        full_name = request.POST.get('full_name')
+        email = request.POST.get('email')
+        phone_number = request.POST.get('phone_number')
+        vehicle_type = request.POST.get('vehicle_type')
+        vehicle_id = request.POST.get('vehicle_id')
+        delivery_area = request.POST.get('delivery_area')
+        address = request.POST.get('address')
+        gender = request.POST.get('gender')
+        emergency_contact = request.POST.get('emergency_contact')
+        bank_details = request.POST.get('bank_details')
+
+        if delivery_agent:
+            # Update existing profile
+            delivery_agent.full_name = full_name
+            delivery_agent.email = email
+            delivery_agent.phone_number = phone_number
+            delivery_agent.vehicle_type = vehicle_type
+            delivery_agent.vehicle_id = vehicle_id
+            delivery_agent.delivery_area = delivery_area
+            delivery_agent.address = address
+            delivery_agent.gender = gender
+            delivery_agent.emergency_contact = emergency_contact
+            delivery_agent.bank_details = bank_details
+            delivery_agent.save()
+        else:
+            # Create new profile
+            DeliveryAgent.objects.create(
+                user=user,
+                full_name=full_name,
+                email=email,
+                phone_number=phone_number,
+                vehicle_type=vehicle_type,
+                vehicle_id=vehicle_id,
+                delivery_area=delivery_area,
+                address=address,
+                gender=gender,
+                emergency_contact=emergency_contact,
+                bank_details=bank_details
+            )
+
+        messages.success(request, "Profile submitted successfully for approval.")
+        return redirect('login')  # Redirect to login after submission for approval
+
+    return render(request, "delivery_agent/complete_profile.html", {"delivery_agent": delivery_agent})
+
+
+
+
 
 # Assuming you have a home page view
 @login_required
@@ -391,7 +501,7 @@ def add_subcategory(request):
 
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib import messages
-from .models import SubCategory, Category
+from .models import Category
 
 def edit_subcategory(request, id):
     subcategory = get_object_or_404(SubCategory, id=id)
@@ -478,6 +588,8 @@ from .models import Product, Seat, Category, SubCategory
 from django.shortcuts import render, redirect
 from .models import Product, Category, SubCategory, Seat, Image
 
+from decimal import Decimal, InvalidOperation  # Add this import
+
 def add_product_view(request):
     if request.method == 'POST':
         product_name = request.POST.get('product_name')
@@ -490,9 +602,27 @@ def add_product_view(request):
         description = request.POST.get('description')
         additional_info = request.POST.get('additional_info')
 
+        # Validate Price
+        try:
+            price = Decimal(price)  # Attempt to convert price to a Decimal
+        except (ValueError, InvalidOperation):
+            raise ValidationError('Price must be a valid decimal number.')
+
+        # Validate Stock
+        try:
+            stock = int(stock)  # Ensure stock is an integer
+        except ValueError:
+            raise ValidationError('Stock must be a valid integer.')
+
         # Create Product instance
         category = Category.objects.get(id=category_id)
         subcategory = SubCategory.objects.get(id=subcategory_id)
+
+        # Fetch the SellerProfile instance for the current user
+        try:
+            seller_profile = SellerProfile.objects.get(user=request.user)
+        except SellerProfile.DoesNotExist:
+            return HttpResponse("Seller profile not found", status=404)
 
         product = Product.objects.create(
             product_name=product_name,
@@ -504,18 +634,8 @@ def add_product_view(request):
             stock=stock,
             description=description,
             additional_info=additional_info,
+            seller=seller_profile  # Correctly assign the instance
         )
-
-        # Create Seat instances
-        seat_types = request.POST.getlist('seat_type')
-        seat_prices = request.POST.getlist('seat_price')
-
-        for seat_type, seat_price in zip(seat_types, seat_prices):
-            Seat.objects.create(
-                product=product,
-                seat_type=seat_type,
-                seat_price=seat_price
-            )
 
         # Handle Image Uploads
         images = request.FILES.getlist('images')
@@ -525,7 +645,7 @@ def add_product_view(request):
                 image=image
             )
 
-        return redirect('view_product')  # Redirect to the product list or another page after creation
+        return redirect('view_product')
 
     categories = Category.objects.all()
     subcategories = SubCategory.objects.all()
@@ -633,9 +753,12 @@ from .models import SubCategory
 def subcategory_detail(request, subcategory_id):
     subcategory = get_object_or_404(SubCategory, id=subcategory_id)
     products = subcategory.products.all()
+    categories = Category.objects.prefetch_related('subcategories').all()  # Fetch categories with subcategories
+    
     context = {
         'subcategory': subcategory,
         'products': products,
+        'categories': categories,  # Pass categories to the template
     }
     return render(request, 'subcategory_detail.html', context)
 
@@ -656,11 +779,12 @@ from .models import Product, Seat
 def product_detail_view(request, pk):
     product = get_object_or_404(Product, pk=pk)
     seats = product.seats.all() 
-   
+    categories = Category.objects.prefetch_related('subcategories').all()  # Fetch categories with subcategories
+    
     return render(request, 'product_detail.html', {
         'product': product,
         'seats': seats,
-       
+        'categories': categories,  # Pass categories to the template
     })
 
 #user can view the page
@@ -978,157 +1102,16 @@ def pending_seller(request, seller_id):
     return redirect('view_sellers')
 
 
-from django.shortcuts import render, redirect
-from .models import CustomCategory
-from django.contrib import messages
-
-def add_custom_category_view(request):
-    if request.method == 'POST':
-        category_name = request.POST.get('name')
-        status = request.POST.get('status') == 'on' 
-
-        if CustomCategory.objects.filter(name=category_name).exists():
-            messages.error(request, 'Category already exists.')
-        else:
-            CustomCategory.objects.create(name=category_name, status=status)
-            messages.success(request, 'Category added successfully.')
-            
-            return redirect('view_custom_categories')  
-
-    return render(request, 'seller/add_custom_category.html')
-
-
-from django.shortcuts import render
-from .models import CustomCategory
-
-def view_custom_categories(request):
-    custom_categories = CustomCategory.objects.all()
-    return render(request, 'seller/view_custom_categories.html', {'custom_categories': custom_categories})
-
-
-from django.shortcuts import render, redirect, get_object_or_404
-from .models import CustomCategory, CustomSubCategory
-
-def add_custom_subcategory(request):
-    categories = CustomCategory.objects.all()
-
-    if request.method == 'POST':
-        category_id = request.POST.get('category')
-        sub_name = request.POST.get('sub_name')
-        status = request.POST.get('status') == 'on'
-
-        category = get_object_or_404(CustomCategory, id=category_id)
-        CustomSubCategory.objects.create(category=category, sub_name=sub_name, status=status)
-
-        return redirect('view_custom_subcategories')  # Redirect to the view where you list subcategories
-
-    return render(request, 'seller/add_custom_subcategory.html', {'categories': categories})
-
-
-from django.shortcuts import render
-from .models import CustomSubCategory
-
-def view_custom_subcategories(request):
-    subcategories = CustomSubCategory.objects.all()
-    return render(request, 'seller/view_custom_subcategories.html', {'subcategories': subcategories})
-
-
-
-
-from django.shortcuts import render, get_object_or_404, redirect
-from .models import CustomCategory
-
-def edit_custom_category_view(request, category_id):
-    category = get_object_or_404(CustomCategory, pk=category_id)
-    if request.method == 'POST':
-        category.name = request.POST.get('name')
-        category.status = request.POST.get('status', category.status)  
-        category.save()
-        return redirect('view_custom_categories')
-        return render(request, 'seller/edit_custom_category.html', {'category': category})
-
-def delete_custom_category(request, id):
-    if request.method == 'POST':
-        category = get_object_or_404(CustomCategory, id=id)
-        category.delete()
-        return redirect('view_custom_categories')
-    return render(request, 'confirm_delete.html', {'id': id})
-
-
-def toggle_status(request, category_id):
-    category = get_object_or_404(CustomCategory, id=category_id)
-    if category.status == 'Active':
-        category.status = 'Inactive'
-    else:
-        category.status = 'Active'
-    category.save()
-    return redirect('view_custom_categories')
-
-
-
-def edit_custom_subcategory(request, subcategory_id):
-    subcategory = get_object_or_404(CustomSubCategory, pk=subcategory_id)
-    categories = CustomCategory.objects.all()
-
-    if request.method == 'POST':
-        subcategory.sub_name = request.POST.get('sub_name')
-        subcategory.category_id = request.POST.get('category')
-        subcategory.status = request.POST.get('status') == 'on'
-        subcategory.save()
-        return redirect('view_custom_subcategories')
-
-    return render(request, 'seller/edit_custom_subcategory.html', {'subcategory': subcategory, 'categories': categories})
-
-from django.shortcuts import get_object_or_404, redirect
-from .models import CustomSubCategory
-
-def delete_custom_subcategory(request, subcategory_id):
-    subcategory = get_object_or_404(CustomSubCategory, pk=subcategory_id)
-    if request.method == 'POST':
-        subcategory.delete()
-        return redirect('view_custom_subcategories')
-    return render(request, 'seller/confirm_delete_custom_subcategory.html', {'subcategory': subcategory})
-
-from django.shortcuts import redirect, get_object_or_404
-from .models import CustomSubCategory
-
-def toggle_custom_subcategory_status(request, subcategory_id):
-    subcategory = get_object_or_404(CustomSubCategory, pk=subcategory_id)
-    subcategory.status = not subcategory.status
-    subcategory.save()
-    return redirect('view_custom_subcategories')
-
-from django.shortcuts import render
-from .models import CustomCategory
-
-def custom_categories(request):
-    custom_categories = CustomCategory.objects.all()
-    return render(request, 'admin/custom_categoris.html', {'custom_categories': custom_categories})
-
-
-from django.shortcuts import render
-from .models import CustomSubCategory  # Adjust this import based on your actual model name
-
-def custom_subcategories(request):
-    custom_subcategories = CustomSubCategory.objects.all()
-    return render(request, 'admin/custom_subcategories.html', {'custom_subcategories': custom_subcategories})
-
-from django.shortcuts import render
-from .models import CustomSubCategory  # Ensure this model exists
-
-from django.shortcuts import render
-from .models import CustomCategory
-
 def custom_view(request):
     # Assuming you want to display custom categories on the index page
-    custom_categories = CustomCategory.objects.all()
-    return render(request, 'custom.html', {'custom_categories': custom_categories})
+    return render(request, 'custom.html')
 
 # views.py
 from django.shortcuts import render
 
 def custom_page_view(request):
     return render(request, 'custom.html')
+
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from .models import CustomRequest
@@ -1216,7 +1199,7 @@ def product_list_view(request):
     return render(request, 'subcategory_detail.html', {'products': products})
 
 # views.py
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 from .models import Comment
 
 def submit_comment(request):
@@ -1585,7 +1568,7 @@ def cancel_order(request, order_id):
     
     messages.success(request, f'Order {order_id} has been cancelled successfully.')
     
-    return redirect('seller_orders')  # Adjust the redirect to your seller order page
+    return redirect('view_orders')  # Adjust the redirect to your seller order page
 
 
 from django.shortcuts import render, redirect, get_object_or_404
@@ -1824,3 +1807,620 @@ def sales_analysis(request):
 
     return render(request, 'seller/sales_analysis.html', {'plot_div': None})
 
+
+
+from django.shortcuts import render, redirect, get_object_or_404
+from .models import DeliveryAgent
+from django.contrib import messages
+
+# View to display the list of delivery agents
+def view_delivery_staff(request):
+    delivery_agents = DeliveryAgent.objects.all()  # Fetch all delivery agents
+    return render(request, 'admin/view_delivery_staff.html', {'delivery_agents': delivery_agents})
+
+# store/views.py
+
+from django.core.mail import send_mail
+
+def approve_delivery_agent(request, agent_id):
+    agent = DeliveryAgent.objects.get(id=agent_id)
+    agent.is_approved = True
+    agent.save()
+
+    # Send approval email
+    subject = "Your Delivery Agent Profile is Approved!"
+    message = f"Dear {agent.full_name},\n\nYour profile has been approved. You can now log in to your dashboard.\n\nThank you!"
+    send_mail(subject, message, 'admin@yourwebsite.com', [agent.email])
+
+    messages.success(request, "Delivery agent approved and notified via email.")
+    return redirect('admin_dashboard')
+
+# Reject delivery agent
+def reject_delivery_agent(request, id):
+    agent = DeliveryAgent.objects.get(id=id)
+    agent.is_approved = False
+    agent.is_pending = False
+    agent.save()
+    return redirect('delivery_staff')  # Redirect to the delivery staff list page
+
+
+
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from .models import Orders, DeliveryAgent
+
+@login_required
+def assign_order_to_delivery_agent(request):
+    if not request.user.is_staff:  # Only allow staff/admin users to assign orders
+        return redirect('home')  # Redirect non-staff users to the home page
+
+    # Get the list of pending orders
+    orders = Orders.objects.filter(status='Pending')  # Modify the filter as needed
+    
+    # Get all delivery agents
+    delivery_agents = DeliveryAgent.objects.all()
+
+    if request.method == 'POST':
+        order_ids = request.POST.getlist('orders')  # Get the list of selected orders
+        delivery_agent_id = request.POST.get('delivery_agent')  # Get the selected delivery agent
+        
+        if order_ids and delivery_agent_id:
+            delivery_agent = DeliveryAgent.objects.get(id=delivery_agent_id)
+
+            # Assign the selected delivery agent to the orders
+            Orders.objects.filter(id__in=order_ids).update(delivery_agent=delivery_agent, status='Assigned')
+
+            # Redirect to the same page with a success message
+            return redirect('assign_orders')  # Redirect to the same page to show the update
+
+    return render(request, 'assign_orders.html', {
+        'orders': orders,
+        'delivery_agents': delivery_agents,
+    })
+
+def get_places(request):
+    district = request.GET.get("district", "").strip()
+    print(f" Fetching places for district: {district}")  # Debugging
+
+    if district:
+        places = Place.objects.filter(preferred_district__iexact=district).values("id", "name").distinct()
+        print(" Places found:", list(places))  # Debugging
+        return JsonResponse(list(places), safe=False)
+    
+    return JsonResponse([], safe=False)  # Return empty list if district is missing
+
+
+def view_assigned_agents(request):
+    assignments = AgentDeliveryZone.objects.select_related('place', 'assigned_agent').all()
+    return render(request, 'admin/view_assignagents.html', {'assignments': assignments})  
+
+@login_required
+def assign_delivery_agent_by_pincode(request):
+    if not request.user.is_staff:  # Only allow staff/admin users to assign orders
+        return redirect('index')  # Redirect non-staff users to the home page
+
+    if request.method == 'POST':
+        pincode = request.POST.get('pincode')  # Get the pincode from the form
+        delivery_agent_id = request.POST.get('delivery_agent')  # Get the selected delivery agent
+
+        # Get the list of pending orders for the given pincode
+        orders = Orders.objects.filter(status='Pending', user__pincode=pincode)
+
+        if delivery_agent_id:
+            delivery_agent = DeliveryAgent.objects.get(id=delivery_agent_id)
+
+            # Check if there are any orders to assign
+            if orders.exists():
+                # Assign the selected delivery agent to the orders
+                for order in orders:
+                    # Create a new DeliveryAssignment instance for each order
+                    DeliveryAssignment.objects.create(order=order, delivery_agent=delivery_agent)
+
+                    # Update the order's delivery agent and status if needed
+                    order.delivery_agent = delivery_agent
+                    order.status = 'Assigned'
+                    order.save()
+
+                messages.success(request, f'Delivery agent {delivery_agent.full_name} assigned to {orders.count()} orders.')
+            else:
+                messages.error(request, f'No pending orders found for pincode {pincode}.')
+
+            return redirect('assign_delivery_agent_by_pincode')  # Redirect to the same page to show the update
+
+    delivery_agents = DeliveryAgent.objects.all()  # Fetch all delivery agents
+    return render(request, 'admin/assign_agent.html', {
+        'delivery_agents': delivery_agents,
+        'orders': orders if 'orders' in locals() else None,  # Pass orders if they exist
+    })  
+    
+    
+from django.shortcuts import render
+from .models import DeliveryAgent
+
+def delivery_agents_list(request):
+    delivery_agents = DeliveryAgent.objects.all()
+    return render(request, 'admin/view_delivery_staff.html', {'delivery_agents': delivery_agents})
+
+
+from django.shortcuts import render, get_object_or_404
+from .models import DeliveryAgent, Orders  # Ensure you import your models
+
+def agent_assigned_orders(request, agent_id):
+    # Fetch the delivery agent based on the provided agent_id
+    agent = get_object_or_404(DeliveryAgent, id=agent_id)
+    # Fetch the orders assigned to this agent
+    assigned_orders = agent.orders.all()  # Assuming related_name='orders' in Orders model
+
+    return render(request, 'delivery_agent/assigned_orders.html', {
+        'agent': agent,
+        'assigned_orders': assigned_orders,
+    })
+    
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+
+from .models import DeliveryAssignment
+
+@login_required
+def my_assigned_orders(request):
+    # Ensure the user is a delivery agent
+    if not hasattr(request.user, 'deliveryagent'):
+        return render(request, 'delivery_agent/order_details.html', {'error': 'You are not a delivery agent'})
+
+    delivery_agent = request.user.deliveryagent  # Get the logged-in delivery agent
+    assigned_orders = DeliveryAssignment.objects.filter(delivery_agent=delivery_agent).order_by('-assigned_at')
+
+    return render(request, 'delivery_agent/order_details.html', {'assigned_orders': assigned_orders})
+
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import json
+
+@csrf_exempt  # Temporarily disable CSRF protection for testing (remove in production)
+def update_order_status(request, order_id):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            new_status = data.get("status", None)
+
+            if not new_status:
+                return JsonResponse({"error": "Missing status"}, status=400)
+
+            order = Order.objects.filter(id=order_id).first()
+            if not order:
+                return JsonResponse({"error": "Order not found"}, status=404)
+
+            order.status = new_status
+            order.save()
+
+            return JsonResponse({"success": "Order status updated successfully"})
+        except Exception as e:
+            print("Error updating order:", e)
+            return JsonResponse({"error": "Something went wrong"}, status=500)
+    else:
+        return JsonResponse({"error": "Invalid request method"}, status=405)
+
+
+
+from django.shortcuts import render
+from .models import Category
+
+def custom_detail_view(request):
+    categories = Category.objects.prefetch_related('subcategories').all()
+    return render(request, 'custom.html', {'categories': categories})
+
+from django.shortcuts import render
+from .models import Category, SubCategory
+
+def homepage(request):
+    categories = Category.objects.prefetch_related('subcategory_set').all()
+    return render(request, 'custom.html', {'categories': categories})
+
+
+
+from django.shortcuts import render
+from .models import CustomRequest
+
+def custom_requests_list(request):
+    requests = CustomRequest.objects.all()  # Fetch all custom requests
+    return render(request, 'custom_requests_table.html', {'requests': requests})
+
+from django.shortcuts import render
+from .models import CustomRequest
+
+def customization_requests_view(request):
+    requests = CustomRequest.objects.all()  # Fetch all customization requests
+    return render(request, 'designer/view_customization.html', {'requests': requests})
+
+from django.shortcuts import get_object_or_404, redirect
+from django.contrib import messages
+from .models import CustomRequest  # Make sure this is your correct model
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
+from .models import CustomRequest  # Assuming your model is named CustomRequest
+
+@login_required
+def update_request_status(request, request_id):
+    custom_request = get_object_or_404(CustomRequest, id=request_id)
+
+    if request.method == "POST":
+        new_status = request.POST.get("status")
+        if new_status in ["Pending", "Accepted"]:
+            custom_request.status = new_status
+            custom_request.save()
+    return redirect("customization_requests")  # Redirect back to requests page
+
+
+from django.shortcuts import render, get_object_or_404
+from .models import CustomRequest
+
+def customization_details(request, request_id):
+    customization_request = get_object_or_404(CustomizationRequest, id=request_id)
+    return render(request, 'designer/customization_details.html', {'request': customization_request})
+
+
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from .models import Material
+
+@login_required
+def add_material(request):
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        description = request.POST.get('description')
+        image = request.FILES.get('image')
+
+        if name:
+            material = Material(designer=request.user, name=name, description=description, image=image)
+            material.save()
+            messages.success(request, "Material added successfully!")
+            return redirect('designer_dashboard')  # Redirect to designer's dashboard
+        else:
+            messages.error(request, "Material name is required.")
+
+    return render(request, 'designer/add_material.html')
+
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+from .models import Material
+
+@login_required
+def view_materials(request):
+    materials = Material.objects.filter(designer=request.user)  # Fetch only designer's materials
+    return render(request, 'designer/view_materials.html', {'materials': materials})
+
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from .models import Furniture, FurnitureImage  # Import FurnitureImage for multiple images
+
+def add_woodtype(request):
+    if request.method == "POST":
+        name = request.POST["name"]
+        description = request.POST.get("wood_description", "")
+        price = request.POST.get("wood_price", "0")
+        images = request.FILES.getlist("wood_images")  # Accept multiple images
+
+        # ✅ Validate price format
+        try:
+            price = float(price)
+        except ValueError:
+            messages.error(request, "Invalid price format.")
+            return redirect("add_material")
+
+        # ✅ Save the wood type
+        wood = Furniture(name=name, description=description, price=price)
+        wood.save()
+
+        # ✅ Save multiple images
+        for image in images:
+            FurnitureImage.objects.create(furniture=wood, image=image)
+
+        messages.success(request, "Wood type added successfully!")
+        return redirect("view_woodtype")
+
+    return render(request, "designer/add_material.html")
+
+from django.shortcuts import render, get_object_or_404, redirect
+from .models import Furniture # Adjust model name if different
+
+def view_woodtype(request):
+    wood_types = Furniture .objects.all()
+    return render(request, "designer/view_woodtype.html", {"wood_types": wood_types})
+
+def delete_woodtype(request, wood_id):
+    wood = get_object_or_404(Furniture , id=wood_id)
+    wood.delete()
+    return redirect("view_woodtype")  # Redirect back after deletion
+
+from django.shortcuts import render, get_object_or_404, redirect
+from .models import Furniture, FurnitureImage
+
+def edit_furniture(request, id):
+    furniture = get_object_or_404(Furniture, id=id)
+
+    if request.method == 'POST':
+        # Update furniture details
+        furniture.name = request.POST.get('name')
+        furniture.description = request.POST.get('description')
+        furniture.price = request.POST.get('price')
+        furniture.save()
+
+        # Handle multiple images
+        images = request.FILES.getlist('images')
+        for image in images:
+            FurnitureImage.objects.create(furniture=furniture, image=image)
+
+        return redirect('view_woodtype')  # Redirect after saving
+
+    images = FurnitureImage.objects.filter(furniture=furniture)
+    return render(request, 'designer/edit_furniture.html', {'furniture': furniture, 'images': images})
+
+def delete_furniture_image(request, image_id):
+    image = get_object_or_404(FurnitureImage, id=image_id)
+    furniture_id = image.furniture.id
+    image.delete()
+    return redirect('edit_furniture', id=furniture_id)
+
+
+from django.shortcuts import render, redirect
+from django.http import JsonResponse
+from .models import CustomizationRequest, Material, Furniture
+from django.core.files.storage import FileSystemStorage
+
+def customization_request_view(request):
+   
+    materials = Material.objects.all()
+    wood_types = Furniture.objects.all()
+    if request.method == 'POST':
+        furniture_type = request.POST.get('furniture_type')
+
+        customization = CustomizationRequest(
+            full_name=request.POST.get('full_name'),
+            email=request.POST.get('email'),
+            phone=request.POST.get('phone'),
+            address=request.POST.get('address'),
+            city=request.POST.get('city'),
+            furniture_type=furniture_type,
+            material_id=request.POST.get('material'),
+            wood_type_id=request.POST.get('wood_type'),
+            color=request.POST.get('color'),
+            finish=request.POST.get('finish'),
+            storage_options=request.POST.get('storage_options'),
+            special_features=request.POST.get('special_features'),
+            reference_image=request.FILES.get('reference_image'),
+            sketch_or_3d_model=request.FILES.get('sketch_or_3d_model'),
+            expected_delivery_date=request.POST.get('expected_delivery_date') or None,
+            urgent_request='urgent_request' in request.POST,  # ✅ This will work correctly
+        )
+
+        def get_decimal(value):
+            return Decimal(value) if value else None
+
+        if furniture_type == 'dining_table':
+            customization.dining_length = get_decimal(request.POST.get('dining_length'))
+            customization.dining_width = get_decimal(request.POST.get('dining_width'))
+            customization.dining_height = get_decimal(request.POST.get('dining_height'))
+
+        elif furniture_type == 'sofa':
+            customization.sofa_length = get_decimal(request.POST.get('sofa_length'))
+            customization.sofa_depth = get_decimal(request.POST.get('sofa_depth'))
+            customization.sofa_seat_height = get_decimal(request.POST.get('sofa_seat_height'))
+
+        elif furniture_type == 'bed':
+            customization.bed_single_length = get_decimal(request.POST.get('bed_single_length'))
+            customization.bed_single_width = get_decimal(request.POST.get('bed_single_width'))
+            customization.bed_queen_length = get_decimal(request.POST.get('bed_queen_length'))
+            customization.bed_queen_width = get_decimal(request.POST.get('bed_queen_width'))
+            customization.bed_king_length = get_decimal(request.POST.get('bed_king_length'))
+            customization.bed_king_width = get_decimal(request.POST.get('bed_king_width'))
+
+        elif furniture_type == 'office_desk':
+            customization.desk_length = get_decimal(request.POST.get('desk_length'))
+            customization.desk_width = get_decimal(request.POST.get('desk_width'))
+            customization.desk_height = get_decimal(request.POST.get('desk_height'))
+
+        elif furniture_type == 'bookshelf':
+            customization.bookshelf_height = get_decimal(request.POST.get('bookshelf_height'))
+            customization.bookshelf_width = get_decimal(request.POST.get('bookshelf_width'))
+            customization.bookshelf_depth = get_decimal(request.POST.get('bookshelf_depth'))
+
+        elif furniture_type == 'wardrobe':
+            customization.wardrobe_height = get_decimal(request.POST.get('wardrobe_height'))
+            customization.wardrobe_width = get_decimal(request.POST.get('wardrobe_width'))
+            customization.wardrobe_depth = get_decimal(request.POST.get('wardrobe_depth'))
+
+        elif furniture_type == 'tv_unit':
+            customization.tv_unit_length = get_decimal(request.POST.get('tv_unit_length'))
+            customization.tv_unit_depth = get_decimal(request.POST.get('tv_unit_depth'))
+            customization.tv_unit_height = get_decimal(request.POST.get('tv_unit_height'))
+
+        elif furniture_type == 'coffee_table':
+            customization.coffee_table_length = get_decimal(request.POST.get('coffee_table_length'))
+            customization.coffee_table_width = get_decimal(request.POST.get('coffee_table_width'))
+            customization.coffee_table_height = get_decimal(request.POST.get('coffee_table_height'))
+
+        elif furniture_type == 'chair':
+            customization.chair_seat_height = get_decimal(request.POST.get('chair_seat_height'))
+            customization.chair_width = get_decimal(request.POST.get('chair_width'))
+            customization.chair_depth = get_decimal(request.POST.get('chair_depth'))
+
+        elif furniture_type == 'outdoor_bench':
+            customization.bench_length = get_decimal(request.POST.get('bench_length'))
+            customization.bench_depth = get_decimal(request.POST.get('bench_depth'))
+            customization.bench_seat_height = get_decimal(request.POST.get('bench_seat_height'))
+
+        customization.save()
+
+    return render(request, "designer/customization_form.html", {"materials": materials, "wood_types": wood_types})
+from django.shortcuts import render, get_object_or_404
+from .models import CustomizationRequest
+
+def customization_details(request, request_id):
+    customization = get_object_or_404(CustomizationRequest, id=request_id)
+    return render(request, 'customization_details.html', {'customization': customization})
+
+from django.shortcuts import render
+from .models import CustomizationRequest
+
+def customization_requests_list(request):
+    requests = CustomizationRequest.objects.all().order_by('-created_at')  # Fetch all requests sorted by date
+    return render(request, 'designer/customization_requests_list.html', {'requests': requests})
+
+
+from django.shortcuts import render, get_object_or_404, redirect
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import json
+from .models import CustomizationRequest
+
+@csrf_exempt
+def update_status(request, request_id):
+    """Update status of customization request via AJAX."""
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            status = data.get("status")
+
+            customization_request = get_object_or_404(CustomizationRequest, id=request_id)
+            customization_request.status = status
+            customization_request.save()
+
+            return JsonResponse({"success": True})
+        except Exception as e:
+            return JsonResponse({"success": False, "error": str(e)})
+    
+    return JsonResponse({"success": False, "error": "Invalid request method"})
+
+def edit_request(request, request_id):
+    """Edit an existing customization request."""
+    customization_request = get_object_or_404(CustomizationRequest, id=request_id)
+
+    if request.method == "POST":
+        customization_request.full_name = request.POST.get("full_name")
+        customization_request.email = request.POST.get("email")
+        customization_request.phone = request.POST.get("phone")
+        customization_request.furniture_type = request.POST.get("furniture_type")
+        customization_request.material_id = request.POST.get("material")
+        customization_request.wood_type_id = request.POST.get("wood_type")
+        customization_request.color = request.POST.get("color")
+        customization_request.status = request.POST.get("status")
+        customization_request.save()
+
+        return redirect("customization_requests_list")  # Redirect to the requests page
+
+    return render(request, "designer/edit_request.html", {"request": customization_request})
+
+@csrf_exempt
+def delete_request(request, request_id):
+    """Delete a customization request via AJAX."""
+    if request.method == "DELETE":
+        try:
+            customization_request = get_object_or_404(CustomizationRequest, id=request_id)
+            customization_request.delete()
+            return JsonResponse({"success": True})
+        except Exception as e:
+            return JsonResponse({"success": False, "error": str(e)})
+    
+    return JsonResponse({"success": False, "error": "Invalid request method"})
+
+
+from store.models import CustomizationRequest
+
+def user_customization_requests(request):
+    requests = CustomizationRequest.objects.all()
+    return render(request, 'designer/user_requests.html', {'requests': requests})
+
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib import messages
+from .models import CustomizationRequest, Payment
+
+def payment_details(request, request_id):
+    customization_request = get_object_or_404(CustomizationRequest, id=request_id)
+    payment, created = Payment.objects.get_or_create(customization_request=customization_request)
+
+    if request.method == "POST":
+        payment.price_furniture = float(request.POST.get("price_furniture") or 0)
+        payment.price_material = float(request.POST.get("price_material") or 0)
+        payment.price_wood = float(request.POST.get("price_wood") or 0)
+        payment.price_color = float(request.POST.get("price_color") or 0)
+        payment.price_storage = float(request.POST.get("price_storage") or 0)
+        payment.price_features = float(request.POST.get("price_features") or 0)
+        payment.price_finish = float(request.POST.get("price_finish") or 0)
+        payment.price_urgent = float(request.POST.get("price_urgent") or 0)
+        payment.is_price_finalized = True  # Finalize price
+        payment.save()
+        messages.success(request, "Payment details saved successfully!")
+        return redirect("customization_requests_list")
+
+    return render(request, "designer/payment_details.html", {"request_obj": customization_request, "payment": payment})
+
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
+from .models import CustomizationRequest, Payment
+
+def download_invoice(request, request_id):  # Ensure request_id is received here
+    customization_request = get_object_or_404(CustomizationRequest, id=request_id)
+    payment = Payment.objects.filter(customization_request=customization_request).first()
+
+    response = HttpResponse(content_type="application/pdf")
+    response["Content-Disposition"] = f'attachment; filename="invoice_{request_id}.pdf"'
+
+    pdf = canvas.Canvas(response, pagesize=letter)
+    pdf.setFont("Helvetica", 12)
+    
+    y = 750  # Start position
+
+    pdf.drawString(100, y, "WoodCrest Customization Invoice")
+    pdf.line(100, y - 5, 500, y - 5)
+    
+    y -= 30
+
+    pdf.drawString(100, y, f"Customer Name: {customization_request.full_name}")
+    pdf.drawString(100, y - 20, f"Request Date: {customization_request.created_at.strftime('%Y-%m-%d')}")
+    pdf.drawString(100, y - 40, f"Furniture Type: {customization_request.get_furniture_type_display()}")
+    pdf.drawString(100, y - 60, f"Material: {customization_request.material.name}")
+    pdf.drawString(100, y - 100, f"Color: {customization_request.color}")
+
+    y -= 140
+
+    pdf.drawString(100, y, "Payment Details:")
+    pdf.line(100, y - 5, 500, y - 5)
+    y -= 30
+
+    if payment:
+        pdf.drawString(100, y, f"Furniture Price: ₹{payment.price_furniture or 0.00}")
+        pdf.drawString(100, y - 20, f"Material Price: ₹{payment.price_material or 0.00}")
+        pdf.drawString(100, y - 60, f"Color Price: ₹{payment.price_color or 0.00}")
+        pdf.drawString(100, y - 80, f"Storage Price: ₹{payment.price_storage or 0.00}")
+        pdf.drawString(100, y - 100, f"Special Features Price: ₹{payment.price_features or 0.00}")
+        pdf.drawString(100, y - 120, f"Finish Price: ₹{payment.price_finish or 0.00}")
+        pdf.drawString(100, y - 140, f"Urgent Request Price: ₹{payment.price_urgent or 0.00}") 
+        pdf.drawString(100, y - 180, f"Total Price: ₹{payment.total_price}")
+        pdf.line(100, y - 185, 500, y - 185)
+    else:
+        pdf.drawString(100, y, "Payment details not available.")
+
+    pdf.save()
+    return response
+
+
+from django.shortcuts import render
+from .models import CustomizationRequest, Payment
+
+def dashboard_view(request):
+    total_custom_orders = CustomizationRequest.objects.count()
+    completed_designs = CustomizationRequest.objects.filter(status="Completed").count()
+    pending_tasks = CustomizationRequest.objects.filter(status="Pending").count()
+    customization_requests = CustomizationRequest.objects.exclude(status="Completed").count()  # Excludes completed ones
+
+    context = {
+        "total_custom_orders": total_custom_orders,
+        "completed_designs": completed_designs,
+        "pending_tasks": pending_tasks,
+        "customization_requests": customization_requests,
+    }
+    
+    return render(request, "designer/designer_dashboard.html", context)
