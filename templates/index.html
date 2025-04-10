@@ -268,13 +268,9 @@
                                             <ul>
                                                 {% for subcategory in category.subcategories.all %}
                                                     <li class="item">
-                                                        {% if subcategory.id == 16 %}
-                                                            <!-- Subcategory with ID 16 links to custom.html -->
-                                                            <a href="{% url 'custom' %}" style="color: black;">{{ subcategory.sub_name }}</a>
-                                                        {% else %}
+                                                       
                                                             <!-- Other subcategories point to their respective detail pages -->
                                                             <a href="{% url 'subcategory_detail' subcategory.id %}" style="color: black;">{{ subcategory.sub_name }}</a>
-                                                        {% endif %}
                                                     </li>
                                                 {% empty %}
                                                     <li class="item">
@@ -329,7 +325,12 @@
     <i class="fa fa-user-plus" style="margin-right: 5px;"></i>
     <span>Become a Seller</span>
 </a>
-               
+<a class="custom-design" href="{% url 'custom' %}" 
+style="display: flex; align-items: center; margin-left: 15px; color:black; border-radius: 5px;">
+ <i class="fa fa-paint-brush" style="margin-right: 5px;"></i>
+ <span>Custom Design</span>
+</a>
+      
     <div style="display: flex; flex-direction: column; gap: 10px; align-items: flex-start;">
         <div>
             
@@ -349,6 +350,11 @@
                             <a class="dropdown-item" href="{% url 'view_orders' %}"> <i class="fa fa-shopping-cart" style="margin-right: 5px;"></i> Orders
                             </a>
                             <a class="dropdown-item" href="{% url 'wishlist' %}"><i class="fa fa-heart" style="margin-right: 5px;"></i> Wishlists</a>
+                            <div class="container text-center" style="margin-top: 20px;">
+                                <a href="{% url 'three_d_image' %}" class="btn btn-primary" style="padding: 10px 20px; font-size: 16px;">
+                                    Go to 3D Model Customization
+                                </a>
+                            </div>
                             <a class="dropdown-item" href="{% url 'contact_view' %}"><i class="fa fa-phone" style="margin-right: 5px;"></i> Contact Us</a>
                             <a class="dropdown-item" href="{% url 'logout' %}"><i class="fa fa-sign-out" style="margin-right: 5px;"></i> Logout</a>
                         </div>
